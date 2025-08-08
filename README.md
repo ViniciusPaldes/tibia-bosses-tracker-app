@@ -29,7 +29,14 @@ I’m also using this build as a **public AI-assisted development case study** �
 
 ## 🧩 Roadmap
 
-See [ROADMAP.md](./ROADMAP.md) for features and release milestones.
+See [ROADMAP.md](./docs/planning/ROADMAP.md) for features and release milestones.
+
+## 🎨 Wireframe Design Notes
+
+This project’s UI/UX planning went through three AI-assisted wireframe iterations, from initial layouts to onboarding flows and final MVP reference screens.
+
+📄 You can read the full documentation of this process here:  
+[**Wireframe Design Notes**](./docs/design/WIREFRAME-DESIGN-NOTES.md)
 
 ## 📸 Screenshots
 
