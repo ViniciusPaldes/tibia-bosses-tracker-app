@@ -55,6 +55,14 @@ These designs:
 📄 **Read the full design process and see all prompts/images here:**  
 [High-Fidelity Design Notes](docs/design/high/DESIGN-NOTES.md)
 
+## 🎨 Style Guide
+
+We have created a **fantasy-themed mobile app style guide** for the Tibia Boss Tracker project, available here:  
+[📄 View Style Guide](./docs/design/style-guide.md)  
+
+This style guide defines the **color palette**, **typography**, **layout rules**, **UI components**, and **iconography** to ensure consistent design throughout development.  
+It will be used in the **next steps of development** to create the actual theme and component files for the Expo (React Native) project, applying the defined values directly in code.
+
 ## 📸 Screenshots
 ◊
 *(Coming soon — early beta UI preview)*
@@ -63,7 +71,7 @@ These designs:
 
 This app is built **with and for the Tibia community**.  
 Promotion channels:
-- **Instagram** (@tibiawiki) — 10k+ engaged followers
+- **Instagram** (@tibiawiki) — 17k+ engaged followers
 - **LinkedIn** — for dev + tech audience
 - **YouTube Shorts/Reels** — behind-the-scenes AI-assisted dev process
 
