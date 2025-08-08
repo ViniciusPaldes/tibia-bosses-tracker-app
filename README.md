@@ -1,50 +1,49 @@
-# Welcome to your Expo app 👋
+# Tibia Boss Tracker (Mobile App)
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+> A mobile companion app for Tibia players to track boss spawn chances in real-time, mark sightings, and plan checks — powered by my existing backend and community-driven data.
 
-## Get started
+## 🎯 Purpose
 
-1. Install dependencies
+Tibia Boss Tracker helps players stay ahead by showing **high/low spawn chances** for bosses in their world and letting them quickly mark which bosses they’ve checked.  
+This project extends my existing **web version** into a mobile experience with **React Native + Expo**, optimized for speed, offline access, and **push notifications**.
 
-   ```bash
-   npm install
-   ```
+I’m also using this build as a **public AI-assisted development case study** — showing how AI tools can speed up mobile app creation from planning to App Store release.
 
-2. Start the app
+## ✨ Features (MVP)
 
-   ```bash
-   npx expo start
-   ```
+- 📜 **Boss List** — sorted by spawn chance  
+- ✅ **Mark as Watched** — synced to backend  
+- 📊 **Chance Levels** — high/medium/low based on world data  
+- 🔔 **Push Notifications** — alerts for high-chance bosses  
+- 📶 **Offline Mode** — last fetched data available without internet  
+- 🚀 **Expo OTA Updates** — weekly feature/content updates without full app store review
 
-In the output, you'll find options to open the app in a
+## 🛠 Tech Stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **React Native (Expo SDK 53)**  
+- **Expo OTA Updates**  
+- **Push Notifications**  
+- **REST API** (existing Tibia boss tracker backend)  
+- **AsyncStorage** for offline data  
+- **AI-powered workflow** for planning, scaffolding, and documentation
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 🧩 Roadmap
 
-## Get a fresh project
+See [ROADMAP.md](./ROADMAP.md) for features and release milestones.
 
-When you're ready, run:
+## 📸 Screenshots
 
-```bash
-npm run reset-project
-```
+*(Coming soon — early beta UI preview)*
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## 📢 Advertising & Community
 
-## Learn more
+This app is built **with and for the Tibia community**.  
+Promotion channels:
+- **Instagram** (@tibiawiki) — 10k+ engaged followers
+- **LinkedIn** — for dev + tech audience
+- **YouTube Shorts/Reels** — behind-the-scenes AI-assisted dev process
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Potential monetization:
+- In-app ads (Google AdMob)  
+- Premium alerts (early notification window)  
+- Donation link / Patreon
