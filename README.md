@@ -58,7 +58,7 @@ These designs:
 ## 🎨 Style Guide
 
 We have created a **fantasy-themed mobile app style guide** for the Tibia Boss Tracker project, available here:  
-[📄 View Style Guide](./docs/design/style-guide.md)  
+[📄 View Style Guide](./docs/design/STYLE-GUIDE.md)  
 
 This style guide defines the **color palette**, **typography**, **layout rules**, **UI components**, and **iconography** to ensure consistent design throughout development.  
 It will be used in the **next steps of development** to create the actual theme and component files for the Expo (React Native) project, applying the defined values directly in code.
