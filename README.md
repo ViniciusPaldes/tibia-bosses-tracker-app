@@ -1,6 +1,6 @@
 # Tibia Boss Tracker (Mobile App)
 
-> A mobile companion app for Tibia players to track boss spawn chances in real-time, mark sightings, and plan checks — powered by my existing backend and community-driven data.
+A mobile companion app for Tibia players to track boss spawn chances in real-time, mark sightings, and plan checks — powered by my existing backend and community-driven data.
 
 ## 🎯 Purpose
 
@@ -36,10 +36,27 @@ See [ROADMAP.md](./docs/planning/ROADMAP.md) for features and release milestones
 This project’s UI/UX planning went through three AI-assisted wireframe iterations, from initial layouts to onboarding flows and final MVP reference screens.
 
 📄 You can read the full documentation of this process here:  
-[**Wireframe Design Notes**](./docs/design/WIREFRAME-DESIGN-NOTES.md)
+[**Wireframe Design Notes**](./docs/design/mid/WIREFRAME-DESIGN-NOTES.md)
+
+## 🎨 High-Fidelity Design Exploration
+
+As part of this project, we explored how far we could push **ChatGPT + image generation** to create **high-fidelity static prototypes** without relying on traditional tools like Figma.
+
+This process involved:
+1. **Prompt creation** – Using ChatGPT to write detailed prompts for each screen.
+2. **Prompt refinement** – Adjusting and improving prompts to ensure clarity and consistency.
+3. **Image generation** – Asking ChatGPT to produce the final high-fidelity static images.
+
+These designs:
+- Serve as **visual references** for implementation.
+- Maintain a **fantasy-themed style** consistent with the app concept.
+- Are **not editable design files**, but static images to guide development.
+
+📄 **Read the full design process and see all prompts/images here:**  
+[High-Fidelity Design Notes](docs/design/high/DESIGN-NOTES.md)
 
 ## 📸 Screenshots
-
+◊
 *(Coming soon — early beta UI preview)*
 
 ## 📢 Advertising & Community

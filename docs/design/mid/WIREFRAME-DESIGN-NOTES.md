@@ -20,7 +20,7 @@ Mid-fidelity wireframes strike a balance between **speed** and **usability for p
 ## 🖼 Iteration 1 – Initial Layout (AI-generated)
 
 **Image Placeholder:**  
-![Wireframe Iteration 1](./prototype-1.png)
+![Wireframe Iteration 1](./imgs/prototype-1.png)
 
 **Key Elements:**
 - Mobile frame with clear navigation titles.
@@ -44,7 +44,7 @@ Mid-fidelity wireframes strike a balance between **speed** and **usability for p
 ## 🖼 Iteration 2 – Percentage View + Social Login (AI-generated)
 
 **Image Placeholder:**  
-![Wireframe Iteration 2](./prototype-2.png)
+![Wireframe Iteration 2](./imgs/prototype-2.png)
 
 **Key Elements:**
 - Replaced toggle with **spawn chance %** for each boss.
@@ -67,7 +67,7 @@ Mid-fidelity wireframes strike a balance between **speed** and **usability for p
 ## 🖼 Iteration 3 – Onboarding + Location + Kill Confirmation (AI-generated)
 
 **Image Placeholder:**  
-![Wireframe Iteration 3](./prototype-3.png)
+![Wireframe Iteration 3](./imgs/prototype-3.png)
 
 **Key Elements:**
 - **Onboarding flow**: Welcome + Select World + Social Login before showing data.
@@ -92,8 +92,40 @@ Mid-fidelity wireframes strike a balance between **speed** and **usability for p
 **To Discard:**
 - None from this iteration — flows match MVP plan.
 
+## 🖼 Iteration 4 – Boss List Improvements + Horizontal Killed Bosses (AI-generated)
+
+**Image:**  
+![Wireframe Iteration 4](./imgs/prototype-4.png)
+
+**Key Elements:**
+- **Boss List screen** redesigned with:
+  - Search bar at the top.
+  - Filter option next to search.
+  - **Horizontal “Bosses Killed Yesterday” list** above the main list.
+  - Vertical list of bosses ordered by spawn chance below.
+- **Boss Detail screen**:
+  - Maintained location info and last sightings.
+  - “Mark as Watched” button still present.
+  - Confirmation modal asking if the boss was killed when marking as watched.
+- **Onboarding** and **Settings** screens kept consistent with previous iteration.
+- **Loading screen** removed as a dedicated screen to simplify flow.
+
+**AI Usage:**
+- Prompt updated to replace the old “Watched” button with a horizontal killed bosses list, based on layout inspiration from the existing web version.
+- Reused the overall style from Iteration 3 to maintain visual consistency while adding new functional elements.
+
+**Good Stuff:**
+- Boss List screen now matches real use cases better.
+- Horizontal killed bosses section is more engaging and informative.
+- Flow between screens feels more intuitive.
+
+**Final Planned Order of Screens:**
+1 → 5 → 3 → 2 → 4  
+(This order will be used in development for the MVP release.)
+
 ## 📌 Next Steps for Development
 
-- Use Iteration 3 as the **main reference** for MVP implementation.
+- Use Iteration 4 as the **main reference** for MVP implementation.
 - Keep mid-fidelity wireframes as **living documentation** for any future design changes.
 - Continue refining during development but avoid high-fidelity visuals until core features are functional.
+- Incorporate the **high-fidelity static designs** generated in this step as visual references for styling and layout decisions during the implementation phase.
