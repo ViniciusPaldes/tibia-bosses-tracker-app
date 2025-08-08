@@ -1,6 +1,3 @@
-## **ROADMAP.md**
-
-```markdown
 # Tibia Boss Tracker – Roadmap
 
 This roadmap outlines the planned features for the app, from MVP to future releases.
