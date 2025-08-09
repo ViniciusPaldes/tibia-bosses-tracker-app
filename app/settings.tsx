@@ -1,11 +1,7 @@
 // app/settings.tsx
+import { Screen } from '@/components/ui/Screen';
 import styled from "styled-components/native";
 
-const Screen = styled.View(({ theme }) => ({
-  flex: 1,
-  backgroundColor: theme.tokens.colors.backgroundDark,
-  padding: 16,
-}));
 
 const Row = styled.View(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
@@ -17,6 +13,8 @@ const Row = styled.View(({ theme }) => ({
 const Label = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
 }));
+
+export const options = { title: 'Settings' };
 
 export default function Settings() {
   return (

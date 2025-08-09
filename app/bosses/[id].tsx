@@ -1,15 +1,10 @@
 // app/bosses/[id].tsx
 import { Button, ButtonText } from "@/components/ui/Button";
-import { router } from "expo-router";
+import { Screen } from "@/components/ui/Screen";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLayoutEffect } from "react";
 import { Text } from "react-native";
 import styled from "styled-components/native";
-
-const Screen = styled.ScrollView(({ theme }) => ({
-  flex: 1,
-  backgroundColor: theme.tokens.colors.backgroundDark,
-  padding: 16,
-}));
-
 const Title = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
   fontFamily: theme.tokens.typography.fonts.title,
@@ -25,9 +20,15 @@ const Section = styled.View(({ theme }) => ({
 }));
 
 export default function BossDetail() {
+  const { name } = useLocalSearchParams<{ name?: string }>();
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: name ?? "Boss Detail" });
+  }, [name, navigation]);
+
   return (
     <Screen>
-      <Title>Orshabaal</Title>
 
       <Section>
         <Text style={{ color: "#fff" }}>Location: Edron, Dragon Lair</Text>

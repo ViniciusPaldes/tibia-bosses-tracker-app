@@ -1,18 +1,14 @@
 // app/bosses/index.tsx
-import { Button, ButtonText } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
-import { router } from 'expo-router';
-import { FlatList, Text, View } from 'react-native';
-import styled from 'styled-components/native';
-
-const Screen = styled.View(({ theme }) => ({
-  flex: 1,
-  backgroundColor: theme.tokens.colors.backgroundDark,
-  padding: 16,
-}));
+import { Button, ButtonText } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { Screen } from "@/components/ui/Screen";
+import { router, useNavigation } from "expo-router";
+import { useLayoutEffect } from "react";
+import { FlatList, Text, View } from "react-native";
+import styled from "styled-components/native";
 
 const TopBar = styled.View(() => ({
-  flexDirection: 'row',
+  flexDirection: "row",
   // RN suporta gap, mas alguns parsers do SC se perdem. Evitamos aqui.
   marginBottom: 12,
 }));
@@ -30,13 +26,15 @@ const Filter = styled.TouchableOpacity(({ theme }) => ({
   height: 44,
   backgroundColor: theme.tokens.colors.card,
   borderRadius: theme.tokens.radius,
-  alignItems: 'center',
-  justifyContent: 'center',
+  alignItems: "center",
+  justifyContent: "center",
   marginLeft: 8, // em vez de gap
 }));
 
 // Tipagem para o FlatList horizontal
-const Horizontal = styled(FlatList as new () => FlatList<any>)({}) as unknown as typeof FlatList;
+const Horizontal = styled(FlatList as new () => FlatList<any>)(
+  {}
+) as unknown as typeof FlatList;
 
 const BossName = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
@@ -54,22 +52,30 @@ const SectionTitle = styled.Text(({ theme }) => ({
 }));
 
 const MOCK_KILLED = [
-  { id: 'draptor', name: 'Draptor', chance: 'High' },
-  { id: 'ghazbaran', name: 'Ghazbaran', chance: 'Low' },
+  { id: "draptor", name: "Draptor", chance: "High" },
+  { id: "ghazbaran", name: "Ghazbaran", chance: "Low" },
 ];
 
 const MOCK_LIST = [
-  { id: 'orkus', name: 'Orshabaal', chancePercent: 72 },
-  { id: 'morg', name: 'Morgaroth', chancePercent: 38 },
+  { id: "orkus", name: "Orshabaal", chancePercent: 72 },
+  { id: "morg", name: "Morgaroth", chancePercent: 38 },
 ];
 
+export const options = { title: "Bosses" };
+
 export default function BossList() {
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: "Bosses" });
+  }, [navigation]);
+
   return (
     <Screen>
       <TopBar>
         <Search placeholder="Search bosses..." placeholderTextColor="#888" />
-        <Filter onPress={() => router.replace("/settings")}>
-          <Text style={{ color: '#fff' }}>⚙︎</Text>
+        <Filter onPress={() => router.push("/settings")}>
+          <Text style={{ color: "#fff" }}>⚙︎</Text>
         </Filter>
       </TopBar>
 
@@ -92,7 +98,14 @@ export default function BossList() {
         data={MOCK_LIST}
         keyExtractor={(i) => i.id}
         renderItem={({ item }) => (
-          <Card onTouchEnd={() => router.push(`/bosses/${item.id}`)}>
+          <Card
+            onTouchEnd={() =>
+              router.push({
+                pathname: "/bosses/[id]",
+                params: { id: item.id, name: item.name },
+              })
+            }
+          >
             <BossName>{item.name}</BossName>
             <Chance>{item.chancePercent}% chance • last checked 1h ago</Chance>
             <View style={{ height: 8 }} />
