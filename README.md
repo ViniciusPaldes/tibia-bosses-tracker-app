@@ -63,6 +63,17 @@ We have created a **fantasy-themed mobile app style guide** for the Tibia Boss T
 This style guide defines the **color palette**, **typography**, **layout rules**, **UI components**, and **iconography** to ensure consistent design throughout development.  
 It will be used in the **next steps of development** to create the actual theme and component files for the Expo (React Native) project, applying the defined values directly in code.
 
+## 🏗️ System Architecture
+
+As part of our goal to involve ChatGPT in **all steps of the development process**, we used it to produce a **UML-style high-level architecture diagram** for the Tibia Boss Tracker app.  
+This ensures both frontend and backend concepts are documented clearly before implementation begins.
+
+You can view the **full prompt and generated diagram** in the [Architecture Documentation](./docs/architecture/ARCHITECTURE.md).
+
+### Quick Preview
+![Tibia Boss Tracker - System Architecture](./docs/architecture/imgs/uml-architecture.png)
+
+---
 ## 📸 Screenshots
 ◊
 *(Coming soon — early beta UI preview)*

@@ -2,16 +2,19 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true,
+    "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
-    }
+      "@/*": ["*"]           // @/theme/theme -> theme/theme.ts
+    },
+    "skipLibCheck": true     // ajuda a evitar ruído de tipagem de libs
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "app",
+    "theme",
+    "types/**/*.d.ts",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
+    "expo-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
   ]
 }
