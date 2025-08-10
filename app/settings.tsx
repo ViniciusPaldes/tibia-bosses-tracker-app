@@ -2,7 +2,6 @@
 import { Screen } from '@/components/ui/Screen';
 import styled from "styled-components/native";
 
-
 const Row = styled.View(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
   borderRadius: theme.tokens.radius,

@@ -4,8 +4,12 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { router, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
+
+import { useModals } from "@/state/modals";
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "styled-components/native";
 
 const TopBar = styled.View(() => ({
   flexDirection: "row",
@@ -65,18 +69,45 @@ export const options = { title: "Bosses" };
 
 export default function BossList() {
   const navigation = useNavigation();
+  const theme = useTheme();
+
+  const { open } = useModals();
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: "Bosses" });
-  }, [navigation]);
-
+    navigation.setOptions({
+      title: "Bosses",
+      headerRight: () => (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            onPress={() => router.push("/settings")}
+            style={{ paddingHorizontal: 8, paddingVertical: 4, marginRight: 8 }}
+            accessibilityLabel="Open settings"
+          >
+            <Ionicons
+              name="settings-outline"
+              size={22}
+              color={theme.tokens.colors.text}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => open("timeline", true)}
+            style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+            accessibilityLabel="Open timeline"
+          >
+            <Ionicons
+              name="time-outline"
+              size={22}
+              color={theme.tokens.colors.text}
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, [navigation, theme, open]);
   return (
     <Screen>
       <TopBar>
         <Search placeholder="Search bosses..." placeholderTextColor="#888" />
-        <Filter onPress={() => router.push("/settings")}>
-          <Text style={{ color: "#fff" }}>⚙︎</Text>
-        </Filter>
       </TopBar>
 
       <SectionTitle>Bosses Killed Yesterday</SectionTitle>
