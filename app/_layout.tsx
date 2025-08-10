@@ -1,29 +1,58 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+// app/_layout.tsx
+import BossStatusModal from '@/components/ui/BossStatusModal';
+import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { darkTheme, lightTheme } from '@/theme/theme';
+import {
+  CinzelDecorative_400Regular,
+  CinzelDecorative_700Bold,
+} from '@expo-google-fonts/cinzel-decorative';
+import { useFonts } from 'expo-font';
+
+const HeaderTitle = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontFamily: theme.tokens.typography.fonts.title,
+  fontSize: theme.tokens.typography.sizes.h2,
+}));
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const scheme = useColorScheme();
+  const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  const [loaded] = useFonts({
+    CinzelRegular: CinzelDecorative_400Regular,
+    CinzelBold: CinzelDecorative_700Bold,
+  });
+  if (!loaded) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <NavigationThemeProvider value={theme}>
+      <StyledThemeProvider theme={theme}>
+        <SafeAreaProvider>
+          <Stack
+            screenOptions={{
+              headerShown: true,
+              headerTransparent: true,
+              headerShadowVisible: false,
+              headerTitleAlign: 'center',
+              headerTintColor: theme.tokens.colors.text,
+              headerBackButtonDisplayMode: 'minimal',
+              headerStyle: { backgroundColor: 'transparent' },
+              headerTitle: ({ children }) => <HeaderTitle>{children}</HeaderTitle>,
+              contentStyle: { backgroundColor: 'transparent' },
+            }}
+          >
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          </Stack>
+          <BossStatusModal/>
+          <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+        </SafeAreaProvider>
+      </StyledThemeProvider>
+    </NavigationThemeProvider>
   );
 }
