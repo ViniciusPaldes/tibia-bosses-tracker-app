@@ -1,11 +1,13 @@
-// app/(modals)/boss-status.tsx
+// components/ui/BossStatusModal.tsx
 import { Button, ButtonText } from "@/components/ui/Button";
-import { router } from "expo-router";
+import { useModals } from "@/state/modals";
+import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
-const Overlay = styled.View(() => ({
-  flex: 1,
-  backgroundColor: "rgba(0, 0, 0, 0.6)",
+const Overlay = styled(Pressable)(() => ({
+  position: "absolute",
+  inset: 0,
+  backgroundColor: "rgba(0,0,0,0.6)",
   alignItems: "center",
   justifyContent: "center",
 }));
@@ -32,19 +34,25 @@ const Hint = styled.Text(({ theme }) => ({
 }));
 
 export default function BossStatusModal() {
+  const { modals, close } = useModals();
+  const bossStatus = modals.bossStatus;
+  const visible = !!bossStatus;
+
+  if (!visible) return null;
+
   return (
-    <Overlay onTouchEnd={() => router.back()}>
+    <Overlay onTouchEnd={() => close("bossStatus")}>
       <Dialog>
         <Title>Boss Killed?</Title>
         <Hint>Choose how to update this boss status.</Hint>
 
-        <Button variant="secondary" onPress={() => router.back()}>
+        <Button variant="secondary" onPress={() => close("bossStatus")}>
           <ButtonText>Notify Others</ButtonText>
         </Button>
 
         <Button
           variant="destructive"
-          onPress={() => router.back()}
+          onPress={() => close("bossStatus")}
           style={{ marginTop: 8 }}
         >
           <ButtonText>Mark as Dead</ButtonText>
@@ -52,7 +60,7 @@ export default function BossStatusModal() {
 
         <Button
           variant="primary"
-          onPress={() => router.back()}
+          onPress={() => close("bossStatus")}
           style={{ marginTop: 8 }}
         >
           <ButtonText>Mark as Watched</ButtonText>

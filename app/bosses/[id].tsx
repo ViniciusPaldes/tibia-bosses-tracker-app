@@ -1,16 +1,13 @@
 // app/bosses/[id].tsx
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
 import { Text } from "react-native";
 import styled from "styled-components/native";
-const Title = styled.Text(({ theme }) => ({
-  color: theme.tokens.colors.text,
-  fontFamily: theme.tokens.typography.fonts.title,
-  fontSize: theme.tokens.typography.sizes.h2,
-  marginBottom: 12,
-}));
+
+import { useModals } from "@/state/modals";
+
 
 const Section = styled.View(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
@@ -29,7 +26,6 @@ export default function BossDetail() {
 
   return (
     <Screen>
-
       <Section>
         <Text style={{ color: "#fff" }}>Location: Edron, Dragon Lair</Text>
       </Section>
@@ -48,7 +44,11 @@ export default function BossDetail() {
 
       <Button
         variant="primary"
-        onPress={() => router.push("/(modals)/boss-status")}
+        onPress={() =>
+          useModals
+            .getState()
+            .open("bossStatus", { bossId: "orshabaal", bossName: "Orshabaal" })
+        }
       >
         <ButtonText>Mark as Watched</ButtonText>
       </Button>
