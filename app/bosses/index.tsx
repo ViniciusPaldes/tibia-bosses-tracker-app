@@ -2,6 +2,8 @@
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
+import { getBossImageUrl } from "@/utils/images";
+import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
@@ -55,6 +57,23 @@ const SectionTitle = styled.Text(({ theme }) => ({
   marginBottom: 8,
 }));
 
+const BossRow = styled.View(({ theme }) => ({
+  flexDirection: "row",
+  alignItems: "center",
+}));
+
+const BossAvatar = styled(Image)(({ theme }) => ({
+  width: 48,
+  height: 48,
+  borderRadius: theme.tokens.radius,
+  marginRight: theme.tokens.spacing(1.5),
+  backgroundColor: theme.tokens.colors.card,
+}));
+
+const BossInfo = styled.View(() => ({
+  flex: 1,
+}));
+
 const MOCK_KILLED = [
   { id: "draptor", name: "Draptor", chance: "High" },
   { id: "ghazbaran", name: "Ghazbaran", chance: "Low" },
@@ -79,8 +98,19 @@ export default function BossList() {
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity
+            onPress={() => router.push("/filter")}
+            style={{ marginRight: 16 }}
+            accessibilityLabel="Open filter"
+          >
+            <Ionicons
+              name="funnel-outline"
+              size={22}
+              color={theme.tokens.colors.text}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
             onPress={() => router.push("/settings")}
-            style={{ paddingHorizontal: 8, paddingVertical: 4, marginRight: 8 }}
+            style={{ marginRight: 16 }}
             accessibilityLabel="Open settings"
           >
             <Ionicons
@@ -91,7 +121,6 @@ export default function BossList() {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => open("timeline", true)}
-            style={{ paddingHorizontal: 8, paddingVertical: 4 }}
             accessibilityLabel="Open timeline"
           >
             <Ionicons
@@ -110,24 +139,34 @@ export default function BossList() {
         <Search placeholder="Search bosses..." placeholderTextColor="#888" />
       </TopBar>
 
-      <SectionTitle>Bosses Killed Yesterday</SectionTitle>
-      <Horizontal
-        data={MOCK_KILLED}
-        keyExtractor={(i: any) => i.id}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }: any) => (
-          <Card style={{ marginRight: 12, width: 160 }}>
-            <BossName>{item.name}</BossName>
-            <Chance>{item.chance}</Chance>
-          </Card>
-        )}
-        style={{ marginBottom: 12 }}
-      />
-
       <FlatList
         data={MOCK_LIST}
         keyExtractor={(i) => i.id}
+        ListHeaderComponent={
+          <View>
+            <SectionTitle>Bosses Killed Yesterday</SectionTitle>
+            <Horizontal
+              data={MOCK_KILLED}
+              keyExtractor={(i: any) => i.id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }: any) => (
+                <Card style={{ marginRight: 12, width: 200 }}>
+                  <BossRow>
+                    <BossAvatar
+                      source={{ uri: getBossImageUrl(item.name) }}
+                      contentFit="cover"
+                    />
+                    <BossInfo>
+                      <BossName numberOfLines={1}>{item.name}</BossName>
+                    </BossInfo>
+                  </BossRow>
+                </Card>
+              )}
+              style={{ marginBottom: 12 }}
+            />
+          </View>
+        }
         renderItem={({ item }) => (
           <Card
             onTouchEnd={() =>
@@ -137,14 +176,26 @@ export default function BossList() {
               })
             }
           >
-            <BossName>{item.name}</BossName>
-            <Chance>{item.chancePercent}% chance • last checked 1h ago</Chance>
+            <BossRow>
+              <BossAvatar
+                source={{ uri: getBossImageUrl(item.name) }}
+                contentFit="cover"
+              />
+              <BossInfo>
+                <BossName numberOfLines={1}>{item.name}</BossName>
+                <Chance>
+                  {item.chancePercent}% chance • last checked 1h ago
+                </Chance>
+              </BossInfo>
+            </BossRow>
             <View style={{ height: 8 }} />
             <Button variant="primary">
               <ButtonText>Check</ButtonText>
             </Button>
           </Card>
         )}
+        contentContainerStyle={{ paddingBottom: 24 }}
+        showsVerticalScrollIndicator={false}
       />
     </Screen>
   );
