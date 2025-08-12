@@ -42,7 +42,7 @@ const Chip = styled.TouchableOpacity<{
 }));
 
 const ChipText = styled.Text<{ selected?: boolean }>(({ theme, selected }) => ({
-  color: selected ? theme.tokens.colors.textOnPrimary : theme.tokens.colors.text,
+  color: selected ? '#000' : theme.tokens.colors.text,
   fontFamily: theme.tokens.typography.fonts.body,
 }));
 

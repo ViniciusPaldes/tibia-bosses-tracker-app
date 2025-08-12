@@ -3,12 +3,14 @@ import { Button, ButtonText } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
+import { format } from "date-fns";
 import { Image } from "expo-image";
-import { router, useNavigation } from "expo-router";
+import { Redirect, router, useNavigation } from "expo-router";
 import { useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
+import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "styled-components/native";
@@ -57,6 +59,23 @@ const SectionTitle = styled.Text(({ theme }) => ({
   marginBottom: 8,
 }));
 
+const PageHeader = styled.View(({ theme }) => ({
+  marginBottom: theme.tokens.spacing(2),
+}));
+
+const PageTitle = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontFamily: theme.tokens.typography.fonts.title,
+  fontSize: theme.tokens.typography.sizes.h1,
+  marginBottom: 4,
+}));
+
+const PageSubtitle = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.textSecondary,
+  fontFamily: theme.tokens.typography.fonts.body,
+  fontSize: theme.tokens.typography.sizes.caption,
+}));
+
 const BossRow = styled.View(({ theme }) => ({
   flexDirection: "row",
   alignItems: "center",
@@ -89,6 +108,8 @@ export const options = { title: "Bosses" };
 export default function BossList() {
   const navigation = useNavigation();
   const theme = useTheme();
+  const todayLabel = format(new Date(), "EEE, MMM d");
+  const { user, initializing } = useAuth();
 
   const { open } = useModals();
 
@@ -133,8 +154,14 @@ export default function BossList() {
       ),
     });
   }, [navigation, theme, open]);
+  if (initializing) return null;
+  if (!user) return <Redirect href="/onboarding" />;
   return (
     <Screen>
+      <PageHeader>
+        <PageTitle>Bosses for Today</PageTitle>
+        <PageSubtitle>{todayLabel}</PageSubtitle>
+      </PageHeader>
       <TopBar>
         <Search placeholder="Search bosses..." placeholderTextColor="#888" />
       </TopBar>

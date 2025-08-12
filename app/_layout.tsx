@@ -1,6 +1,7 @@
 // app/_layout.tsx
 import BossStatusModal from '@/components/ui/BossStatusModal';
 import TimelinePanel from '@/components/ui/TimelinePanel';
+import { AuthProvider } from '@/state/auth';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -10,8 +11,8 @@ import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { darkTheme, lightTheme } from '@/theme/theme';
 import {
-  CinzelDecorative_400Regular,
-  CinzelDecorative_700Bold,
+    CinzelDecorative_400Regular,
+    CinzelDecorative_700Bold,
 } from '@expo-google-fonts/cinzel-decorative';
 import { useFonts } from 'expo-font';
 
@@ -35,7 +36,8 @@ export default function RootLayout() {
     <NavigationThemeProvider value={theme}>
       <StyledThemeProvider theme={theme}>
         <SafeAreaProvider>
-          <Stack
+          <AuthProvider>
+            <Stack
             screenOptions={{
               headerShown: true,
               headerTransparent: true,
@@ -49,9 +51,10 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          </Stack>
-          <BossStatusModal/>
-          <TimelinePanel />
+            </Stack>
+            <BossStatusModal/>
+            <TimelinePanel />
+          </AuthProvider>
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         </SafeAreaProvider>
       </StyledThemeProvider>
