@@ -3,12 +3,14 @@ import { create } from 'zustand';
 
 type BossStatusPayload = { bossId: string; bossName: string } | null;
 type TimelinePayload = true | null;
+type DrawerPayload = true | null;
 
-type ModalKey = 'bossStatus' | 'timeline';
+type ModalKey = 'bossStatus' | 'timeline' | 'drawer';
 
 type ModalState = {
   bossStatus: BossStatusPayload;
   timeline: TimelinePayload;
+  drawer: DrawerPayload;
 };
 
 type Store = {
@@ -18,7 +20,7 @@ type Store = {
 };
 
 export const useModals = create<Store>((set) => ({
-  modals: { bossStatus: null, timeline: null },
+  modals: { bossStatus: null, timeline: null, drawer: null },
   open: (key, payload) =>
     set((s) => ({ modals: { ...s.modals, [key]: payload } })),
   close: (key) =>

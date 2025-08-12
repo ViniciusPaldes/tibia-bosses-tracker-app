@@ -1,5 +1,6 @@
 // app/_layout.tsx
 import BossStatusModal from '@/components/ui/BossStatusModal';
+import LeftDrawer from '@/components/ui/LeftDrawer';
 import TimelinePanel from '@/components/ui/TimelinePanel';
 import { AuthProvider } from '@/state/auth';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
@@ -11,8 +12,8 @@ import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { darkTheme, lightTheme } from '@/theme/theme';
 import {
-    CinzelDecorative_400Regular,
-    CinzelDecorative_700Bold,
+  CinzelDecorative_400Regular,
+  CinzelDecorative_700Bold,
 } from '@expo-google-fonts/cinzel-decorative';
 import { useFonts } from 'expo-font';
 
@@ -54,6 +55,7 @@ export default function RootLayout() {
             </Stack>
             <BossStatusModal/>
             <TimelinePanel />
+            <LeftDrawer />
           </AuthProvider>
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         </SafeAreaProvider>

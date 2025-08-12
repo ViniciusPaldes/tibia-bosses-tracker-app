@@ -116,6 +116,15 @@ export default function BossList() {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: "Bosses",
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => open('drawer', true)}
+          style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+          accessibilityLabel="Open menu"
+        >
+          <Ionicons name="menu-outline" size={22} color={theme.tokens.colors.text} />
+        </TouchableOpacity>
+      ),
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity
@@ -129,17 +138,7 @@ export default function BossList() {
               color={theme.tokens.colors.text}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => router.push("/settings")}
-            style={{ marginRight: 16 }}
-            accessibilityLabel="Open settings"
-          >
-            <Ionicons
-              name="settings-outline"
-              size={22}
-              color={theme.tokens.colors.text}
-            />
-          </TouchableOpacity>
+         
           <TouchableOpacity
             onPress={() => open("timeline", true)}
             accessibilityLabel="Open timeline"
