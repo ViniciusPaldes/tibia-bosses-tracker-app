@@ -1,3 +1,4 @@
+import { Platform } from "react-native";
 import styled from "styled-components/native";
 
 type Variant = "primary" | "secondary" | "destructive";
@@ -28,9 +29,10 @@ export const Button = styled.TouchableOpacity<{ variant?: Variant }>(
 );
 
 export const ButtonText = styled.Text(({ theme }) => ({
-  color: theme.tokens.colors.textOnPrimary,
+  color: theme.tokens.colors.text,
   fontFamily: theme.tokens.typography.fonts.button,
-  fontSize: theme.tokens.typography.sizes.button,
-  fontWeight: "700",
+  fontSize: theme.tokens.typography.sizes.body,
+  // Avoid Android font fallback when using custom fonts
+  fontWeight: Platform.OS === "ios" ? "700" : undefined,
   textAlign: "center",
 }));

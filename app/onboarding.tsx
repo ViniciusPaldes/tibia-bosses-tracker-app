@@ -1,4 +1,5 @@
 import { Button, ButtonText } from "@/components/ui/Button";
+import { useAuth } from "@/state/auth";
 import { router } from 'expo-router';
 import styled from "styled-components/native";
 
@@ -24,19 +25,21 @@ const Dropdown = styled.View(({ theme }) => ({
   marginBottom: 16,
 }));
 
-const handleGooglePress = () => {
-  // TODO: implementar AuthSession no futuro
-  router.replace("/bosses"); // avança direto para a lista
+const handleGooglePress = async (signInWithGoogle: () => Promise<void>) => {
+  await signInWithGoogle();
+  router.replace('/bosses');
 };
 
 export default function Onboarding() {
+  const { signInWithGoogle, isGoogleReady } = useAuth();
   return (
     <Container>
       <Title>Tibia Boss Tracker</Title>
       <Dropdown>
         <Title style={{ fontSize: 16, marginBottom: 0 }}>World: Venebra</Title>
       </Dropdown>
-      <Button variant="primary" onPress={handleGooglePress}>
+      <Button variant="primary" onPress={() => handleGooglePress(signInWithGoogle)}
+        disabled={!isGoogleReady}>
         <ButtonText>Sign in with Google</ButtonText>
       </Button>
     </Container>

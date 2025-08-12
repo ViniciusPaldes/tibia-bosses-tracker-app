@@ -1,6 +1,9 @@
 // app/index.tsx
+import { useAuth } from "@/state/auth";
 import { Redirect } from "expo-router";
 
 export default function Index() {
-  return <Redirect href="/onboarding" />;
+  const { user, initializing } = useAuth();
+  if (initializing) return null;
+  return <Redirect href={user ? "/bosses" : "/onboarding"} />;
 }

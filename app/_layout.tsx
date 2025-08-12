@@ -1,5 +1,8 @@
 // app/_layout.tsx
 import BossStatusModal from '@/components/ui/BossStatusModal';
+import LeftDrawer from '@/components/ui/LeftDrawer';
+import TimelinePanel from '@/components/ui/TimelinePanel';
+import { AuthProvider } from '@/state/auth';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -34,7 +37,8 @@ export default function RootLayout() {
     <NavigationThemeProvider value={theme}>
       <StyledThemeProvider theme={theme}>
         <SafeAreaProvider>
-          <Stack
+          <AuthProvider>
+            <Stack
             screenOptions={{
               headerShown: true,
               headerTransparent: true,
@@ -48,8 +52,11 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          </Stack>
-          <BossStatusModal/>
+            </Stack>
+            <BossStatusModal/>
+            <TimelinePanel />
+            <LeftDrawer />
+          </AuthProvider>
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
         </SafeAreaProvider>
       </StyledThemeProvider>

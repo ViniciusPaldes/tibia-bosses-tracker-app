@@ -1,17 +1,26 @@
 // state/modals.ts
 import { create } from 'zustand';
 
-type ModalKey = 'bossStatus' | 'settingsHelp' /* ... */;
-type ModalState = Record<ModalKey, any | null>;
+type BossStatusPayload = { bossId: string; bossName: string } | null;
+type TimelinePayload = true | null;
+type DrawerPayload = true | null;
+
+type ModalKey = 'bossStatus' | 'timeline' | 'drawer';
+
+type ModalState = {
+  bossStatus: BossStatusPayload;
+  timeline: TimelinePayload;
+  drawer: DrawerPayload;
+};
 
 type Store = {
   modals: ModalState;
-  open: <K extends ModalKey>(key: K, payload: NonNullable<ModalState[K]>) => void;
+  open: <K extends ModalKey>(key: K, payload: ModalState[K]) => void;
   close: (key: ModalKey) => void;
 };
 
 export const useModals = create<Store>((set) => ({
-  modals: { bossStatus: null, settingsHelp: null },
+  modals: { bossStatus: null, timeline: null, drawer: null },
   open: (key, payload) =>
     set((s) => ({ modals: { ...s.modals, [key]: payload } })),
   close: (key) =>
