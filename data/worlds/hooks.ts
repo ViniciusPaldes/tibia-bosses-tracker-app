@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { SELECTED_WORLD_KEY, WORLD_LIST_KEY } from '../cache/keys';
 import { getWithTTL, setWithTTL } from '../cache/storage';
+import { BossChances, fetchBossChances, getCachedBossChances, setCachedBossChances, sortBossesByChance } from '../chances';
 import { fetchWorlds } from './api';
 
 const TTL_90_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
@@ -70,6 +71,45 @@ export async function loadSelectedWorld(): Promise<string | null> {
 
 export async function saveSelectedWorld(name: string): Promise<void> {
   await setWithTTL(SELECTED_WORLD_KEY, name);
+}
+
+// Fetch boss chances for the currently selected world. Cached per day.
+export function useBossChances(selectedWorld: string | null) {
+  const [data, setData] = useState<BossChances | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    if (!selectedWorld) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Only read from saved local data after it has been fetched once for the day.
+      // We attempt to read; if missing, we fetch and then set; subsequent reads today use cache.
+      const cached = await getCachedBossChances(selectedWorld);
+      if (cached && cached.length) {
+        setData(sortBossesByChance(cached));
+        setLoading(false);
+        return;
+      }
+
+      const { date, data } = await fetchBossChances(selectedWorld);
+      await setCachedBossChances(selectedWorld, date, data);
+      setData(sortBossesByChance(data));
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to load boss chances');
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedWorld]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const refetch = useCallback(() => load(), [load]);
+
+  return { data: data ?? [], loading, error, refetch } as const;
 }
 
 

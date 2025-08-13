@@ -10,9 +10,11 @@ import { useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
+import { loadSelectedWorld, useBossChances } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { Ionicons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import { useTheme } from "styled-components/native";
 
 const TopBar = styled.View(() => ({
@@ -110,6 +112,11 @@ export default function BossList() {
   const theme = useTheme();
   const todayLabel = format(new Date(), "EEE, MMM d");
   const { user, initializing } = useAuth();
+  const [selectedWorld, setSelectedWorld] = useState<string | null>(null);
+  useEffect(() => {
+    loadSelectedWorld().then((w) => setSelectedWorld(w));
+  }, []);
+  const { data: chances, loading: chancesLoading } = useBossChances(selectedWorld);
 
   const { open } = useModals();
 
@@ -163,7 +170,7 @@ export default function BossList() {
       </TopBar>
 
       <FlatList
-        data={MOCK_LIST}
+        data={chances.map((c) => ({ ...c, id: c.id ?? c.name }))}
         keyExtractor={(i) => i.id}
         ListHeaderComponent={
           <View>
@@ -196,12 +203,7 @@ export default function BossList() {
         }
         renderItem={({ item }) => (
           <Card
-            onTouchEnd={() =>
-              router.push({
-                pathname: "/bosses/[id]",
-                params: { id: item.id, name: item.name },
-              })
-            }
+            onTouchEnd={() => router.push({ pathname: "/bosses/[id]", params: { id: item.id, boss: JSON.stringify(item) } })}
           >
             <BossRow>
               <BossAvatar
@@ -211,7 +213,7 @@ export default function BossList() {
               <BossInfo>
                 <BossName numberOfLines={1}>{item.name}</BossName>
                 <Chance>
-                  {item.chancePercent}% chance • last checked 1h ago
+                  {item.chance ?? 'Unknown'}
                 </Chance>
               </BossInfo>
             </BossRow>
