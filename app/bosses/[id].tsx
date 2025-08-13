@@ -6,6 +6,7 @@ import { useLayoutEffect } from "react";
 import { Text } from "react-native";
 import styled from "styled-components/native";
 
+import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 
@@ -33,6 +34,7 @@ export default function BossDetail() {
     <Screen>
       <Section>
         <Text style={{ color: "#fff" }}>Location: Edron, Dragon Lair</Text>
+        <StaticTibiaMap coord="32968,32400,12:2" height={350} />
       </Section>
 
       <Section>
