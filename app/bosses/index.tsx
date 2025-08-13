@@ -95,15 +95,6 @@ const BossInfo = styled.View(() => ({
   flex: 1,
 }));
 
-const MOCK_KILLED = [
-  { id: "draptor", name: "Draptor", chance: "High" },
-  { id: "ghazbaran", name: "Ghazbaran", chance: "Low" },
-];
-
-const MOCK_LIST = [
-  { id: "orkus", name: "Orshabaal", chancePercent: 72 },
-  { id: "morg", name: "Morgaroth", chancePercent: 38 },
-];
 
 export const options = { title: "Bosses" };
 
@@ -162,6 +153,8 @@ export default function BossList() {
   }, [navigation, theme, open]);
   if (initializing) return null;
   if (!user) return <Redirect href="/onboarding" />;
+  const killedYesterday = chances.filter((c) => c.daysSince === 1);
+  const killedYesterdayData = killedYesterday.map((c) => ({ ...c, id: c.id ?? c.name }));
   return (
     <Screen>
 
@@ -174,27 +167,31 @@ export default function BossList() {
         keyExtractor={(i) => i.id}
         ListHeaderComponent={
           <View>
-            <SectionTitle>Bosses Killed Yesterday</SectionTitle>
-            <Horizontal
-              data={MOCK_KILLED}
-              keyExtractor={(i: any) => i.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }: any) => (
-                <Card style={{ marginRight: 12, width: 200 }}>
-                  <BossRow>
-                    <BossAvatar
-                      source={{ uri: getBossImageUrl(item.name) }}
-                      contentFit="cover"
-                    />
-                    <BossInfo>
-                      <BossName numberOfLines={1}>{item.name}</BossName>
-                    </BossInfo>
-                  </BossRow>
-                </Card>
-              )}
-              style={{ marginBottom: 12 }}
-            />
+            {killedYesterdayData.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <SectionTitle>Bosses Killed Yesterday</SectionTitle>
+                <Horizontal
+                  data={killedYesterdayData}
+                  keyExtractor={(i: any) => i.id}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({ item }: any) => (
+                    <Card style={{ marginRight: 12, width: 200 }}>
+                      <BossRow>
+                        <BossAvatar
+                          source={{ uri: getBossImageUrl(item.name) }}
+                          contentFit="cover"
+                        />
+                        <BossInfo>
+                          <BossName numberOfLines={1}>{item.name}</BossName>
+                        </BossInfo>
+                      </BossRow>
+                    </Card>
+                  )}
+                  style={{ marginBottom: 12 }}
+                />
+              </View>
+            )}
             <PageHeader>
               <PageTitle>Today’s Bosses</PageTitle>
               <PageSubtitle>{todayLabel}</PageSubtitle>
