@@ -138,7 +138,7 @@ export default function BossList() {
               color={theme.tokens.colors.text}
             />
           </TouchableOpacity>
-         
+
           <TouchableOpacity
             onPress={() => open("timeline", true)}
             accessibilityLabel="Open timeline"
@@ -157,10 +157,7 @@ export default function BossList() {
   if (!user) return <Redirect href="/onboarding" />;
   return (
     <Screen>
-      <PageHeader>
-        <PageTitle>Bosses for Today</PageTitle>
-        <PageSubtitle>{todayLabel}</PageSubtitle>
-      </PageHeader>
+
       <TopBar>
         <Search placeholder="Search bosses..." placeholderTextColor="#888" />
       </TopBar>
@@ -191,6 +188,10 @@ export default function BossList() {
               )}
               style={{ marginBottom: 12 }}
             />
+            <PageHeader>
+              <PageTitle>Bosses for Today</PageTitle>
+              <PageSubtitle>{todayLabel}</PageSubtitle>
+            </PageHeader>
           </View>
         }
         renderItem={({ item }) => (
