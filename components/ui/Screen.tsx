@@ -1,5 +1,6 @@
 import { useHeaderHeight } from "@react-navigation/elements";
 import { ReactNode } from "react";
+import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
@@ -7,6 +8,7 @@ interface ScreenProps {
   children: ReactNode;
   padding?: number;
   withHeaderOffset?: boolean; // default: true
+  scrollable?: boolean; // default: false
 }
 
 const Container = styled(SafeAreaView)<{ padding?: number }>(
@@ -21,6 +23,7 @@ export function Screen({
   children,
   padding,
   withHeaderOffset = true,
+  scrollable = false,
 }: ScreenProps) {
   const headerHeight = useHeaderHeight(); // respeita iOS/Android
   return (
@@ -30,7 +33,17 @@ export function Screen({
       padding={padding}
       style={withHeaderOffset ? { paddingTop: headerHeight + 8 } : undefined}
     >
-      {children}
+      {scrollable ? (
+        <ScrollView
+          style={{ flex: 1 }}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 16 }}
+        >
+          {children}
+        </ScrollView>
+      ) : (
+        children
+      )}
     </Container>
   );
 }

@@ -124,7 +124,7 @@ export function BossListItem({
                     <TitleWrap>
                         <Name numberOfLines={1} ellipsizeMode="tail">{name}</Name>
                     </TitleWrap>
-                    <Badge bg={chanceColor({ tokens: { colors: { success: '#28a745', warning: '#ffc107' } } }, chance)}>
+                    <Badge bg={chanceColor({ tokens: { colors: { success: '#4CAF50', warning: '#FF9800' } } }, chance)}>
                         <BadgeText>{chance}</BadgeText>
                     </Badge>
                 </Row>

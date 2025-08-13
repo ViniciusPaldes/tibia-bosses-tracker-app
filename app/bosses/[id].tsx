@@ -25,8 +25,8 @@ const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, leve
   const map: Record<string, string> = {
     high: theme.tokens.colors.success,
     medium: theme.tokens.colors.warning,
-    low: theme.tokens.colors.danger,
-    'Lost Track': theme.tokens.colors.danger,
+    low: '#7a7a7a',
+    'Lost Track': "#555",
     'no chance': theme.tokens.colors.danger,
   } as const;
   const bg = (level && map[level]) || theme.tokens.colors.backgroundDark;
@@ -36,8 +36,11 @@ const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, leve
     paddingVertical: 4,
     borderRadius: theme.tokens.radius,
     backgroundColor: bg,
-    color: theme.tokens.colors.text,
     overflow: 'hidden',
+    color: '#111',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    fontSize: 12,
   } as any;
 });
 
@@ -68,73 +71,73 @@ export default function BossDetail() {
     initializing ? null : !user ? (
       <Redirect href="/onboarding" />
     ) : (
-    <Screen>
-      <Section>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Text style={{ color: "#fff", fontSize: 18 }}>{parsed?.city ?? 'Unknown'}</Text>
-          <Badge level={parsed?.chance as BossChanceLevel}>{parsed?.chance ?? 'Unknown'}</Badge>
-        </View>
-      </Section>
+      <Screen scrollable>
+        <Section>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ color: "#fff", fontSize: 18 }}>{parsed?.city ?? 'Unknown'}</Text>
+            <Badge level={parsed?.chance as BossChanceLevel}>{parsed?.chance ?? 'Unknown'}</Badge>
+          </View>
+        </Section>
 
-      <Section>
-        <Text style={{ color: "#fff", marginBottom: 6 }}>Location</Text>
-        {parsed?.location?.length ? (
-          <>
-            {parsed.location.map((coord, idx) => (
-              <View key={`${coord}-${idx}`} style={{ marginBottom: 8 }}>
-                <Text style={{ color: "#b0b0b0", marginBottom: 6 }}>{coord}</Text>
-                <StaticTibiaMap coord={coord} height={250} />
-              </View>
-            ))}
-          </>
-        ) : (
-          <Text style={{ color: "#b0b0b0" }}>Unknown</Text>
-        )}
-      </Section>
+        <Section>
+          <Text style={{ color: "#fff", marginBottom: 6 }}>Location</Text>
+          {parsed?.location?.length ? (
+            <>
+              {parsed.location.map((coord, idx) => (
+                <View key={`${coord}-${idx}`} style={{ marginBottom: 8 }}>
+                  <Text style={{ color: "#b0b0b0", marginBottom: 6 }}>{coord}</Text>
+                  <StaticTibiaMap coord={coord} height={250} />
+                </View>
+              ))}
+            </>
+          ) : (
+            <Text style={{ color: "#b0b0b0" }}>Unknown</Text>
+          )}
+        </Section>
 
-      <Section>
-        <Text style={{ color: "#fff", marginBottom: 6 }}>Last seen</Text>
-        <Text style={{ color: "#b0b0b0" }}>
-          {parsed?.lastSeen ?? 'Unknown'}{typeof parsed?.daysSince === 'number' ? ` • ${parsed?.daysSince} days ago` : ''}
-        </Text>
-      </Section>
+        <Section>
+          <Text style={{ color: "#fff", marginBottom: 6 }}>Last seen</Text>
+          <Text style={{ color: "#b0b0b0" }}>
+            {parsed?.lastSeen ?? 'Unknown'}{typeof parsed?.daysSince === 'number' ? ` • ${parsed?.daysSince} days ago` : ''}
+          </Text>
+        </Section>
 
-      <Section>
-        <Text style={{ color: "#fff", marginBottom: 6, textAlign: 'center' }}>Loot</Text>
-        {parsed?.loots?.length ? (
-          <FlatList
-            data={parsed.loots}
-            keyExtractor={(i) => i}
-            renderItem={({ item }) => (
-              <View style={{ alignItems: 'center' }}>
-                <LootImage
-                  source={{ uri: getLootImageUrl(item) }}
-                  contentFit="contain"
-                  accessibilityLabel={item}
-                />
-                <Text style={{ color: '#b0b0b0', marginTop: 4 }}>{item}</Text>
-              </View>
-            )}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingHorizontal: 8 }}
-          />
-        ) : (
-          <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>Unknown</Text>
-        )}
-      </Section>
+        <Section>
+          <Text style={{ color: "#fff", marginBottom: 6, textAlign: 'center' }}>Loot</Text>
+          {parsed?.loots?.length ? (
+            <FlatList
+              data={parsed.loots}
+              keyExtractor={(i) => i}
+              renderItem={({ item }) => (
+                <View style={{ alignItems: 'center' }}>
+                  <LootImage
+                    source={{ uri: getLootImageUrl(item) }}
+                    contentFit="contain"
+                    accessibilityLabel={item}
+                  />
+                  <Text style={{ color: '#b0b0b0', marginTop: 4 }}>{item}</Text>
+                </View>
+              )}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingHorizontal: 8 }}
+            />
+          ) : (
+            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>Unknown</Text>
+          )}
+        </Section>
 
-      <Button
-        variant="primary"
-        onPress={() =>
-          useModals
-            .getState()
-            .open("bossStatus", { bossId: parsed?.id ?? (parsed?.name ?? 'unknown'), bossName: parsed?.name ?? 'Unknown' })
-        }
-      >
-        <ButtonText>Mark as Watched</ButtonText>
-      </Button>
-    </Screen>
+        <Button
+          variant="primary"
+          onPress={() =>
+            useModals
+              .getState()
+              .open("bossStatus", { bossId: parsed?.id ?? (parsed?.name ?? 'unknown'), bossName: parsed?.name ?? 'Unknown' })
+          }
+        >
+          <ButtonText>Mark as Watched</ButtonText>
+        </Button>
+      </Screen>
     )
   );
 }
