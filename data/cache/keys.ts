@@ -5,4 +5,7 @@ export const SELECTED_WORLD_KEY = 'user:selectedWorld';
 export const BOSS_CHANCES_KEY_PREFIX = 'bosses:chances:v1';
 export const BOSS_CHANCES_LATEST_KEY_PREFIX = 'bosses:chances:latest:v1';
 
+// Persisted filters/search for bosses list
+export const BOSSES_FILTERS_KEY = 'bosses:filters:v1';
+
 
