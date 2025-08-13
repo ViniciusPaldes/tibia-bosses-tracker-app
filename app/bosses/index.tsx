@@ -1,5 +1,4 @@
 // app/bosses/index.tsx
-import { Button, ButtonText } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
@@ -10,6 +9,7 @@ import { useLayoutEffect } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
+import { BossListItem } from "@/components/ui/BossListItem";
 import { loadSelectedWorld, useBossChances } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
@@ -196,35 +196,25 @@ export default function BossList() {
               style={{ marginBottom: 12 }}
             />
             <PageHeader>
-              <PageTitle>Bosses for Today</PageTitle>
+              <PageTitle>Today’s Bosses</PageTitle>
               <PageSubtitle>{todayLabel}</PageSubtitle>
             </PageHeader>
           </View>
         }
         renderItem={({ item }) => (
-          <TouchableOpacity
-            delayPressIn={100}
-            onPress={() => router.push({ pathname: "/bosses/[id]", params: { id: item.id, boss: JSON.stringify(item) } })}
-          >
-            <Card pointerEvents="none">
-              <BossRow>
-                <BossAvatar
-                  source={{ uri: getBossImageUrl(item.name) }}
-                  contentFit="cover"
-                />
-                <BossInfo>
-                  <BossName numberOfLines={1}>{item.name}</BossName>
-                  <Chance>
-                    {item.chance ?? 'Unknown'}
-                  </Chance>
-                </BossInfo>
-              </BossRow>
-              <View style={{ height: 8 }} />
-              <Button variant="primary">
-                <ButtonText>Check</ButtonText>
-              </Button>
-            </Card>
-          </TouchableOpacity>
+          <BossListItem
+            name={item.name}
+            city={item.city}
+            daysSince={item.daysSince}
+            chance={(item.chance ?? 'low') as any}
+            imageUrl={getBossImageUrl(item.name)}
+            onPress={() =>
+              router.push({
+                pathname: '/bosses/[id]',
+                params: { id: item.id, boss: JSON.stringify(item) },
+              })
+            }
+          />
         )}
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
