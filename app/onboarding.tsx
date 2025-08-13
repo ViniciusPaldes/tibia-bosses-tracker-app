@@ -2,7 +2,7 @@ import { Button, ButtonText } from "@/components/ui/Button";
 import SelectModal from "@/components/ui/SelectModal";
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from '@/data/worlds/hooks';
 import { useAuth } from "@/state/auth";
-import { router } from 'expo-router';
+import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import styled from "styled-components/native";
 
@@ -45,11 +45,10 @@ const ErrorText = styled.Text(({ theme }) => ({
 
 const handleGooglePress = async (signInWithGoogle: () => Promise<void>) => {
   await signInWithGoogle();
-  router.replace('/bosses');
 };
 
 export default function Onboarding() {
-  const { signInWithGoogle, isGoogleReady } = useAuth();
+  const { user, initializing, signInWithGoogle, isGoogleReady } = useAuth();
   const { data: worlds, loading, error, refetch } = useWorlds();
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -60,6 +59,8 @@ export default function Onboarding() {
   }, []);
 
   const canSignIn = !!selected && !loading && worlds.length > 0 && isGoogleReady;
+
+  if (!initializing && user) return <Redirect href="/bosses" />;
 
   return (
     <Container>

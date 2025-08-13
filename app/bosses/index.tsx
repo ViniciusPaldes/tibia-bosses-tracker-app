@@ -202,26 +202,29 @@ export default function BossList() {
           </View>
         }
         renderItem={({ item }) => (
-          <Card
-            onTouchEnd={() => router.push({ pathname: "/bosses/[id]", params: { id: item.id, boss: JSON.stringify(item) } })}
+          <TouchableOpacity
+            delayPressIn={100}
+            onPress={() => router.push({ pathname: "/bosses/[id]", params: { id: item.id, boss: JSON.stringify(item) } })}
           >
-            <BossRow>
-              <BossAvatar
-                source={{ uri: getBossImageUrl(item.name) }}
-                contentFit="cover"
-              />
-              <BossInfo>
-                <BossName numberOfLines={1}>{item.name}</BossName>
-                <Chance>
-                  {item.chance ?? 'Unknown'}
-                </Chance>
-              </BossInfo>
-            </BossRow>
-            <View style={{ height: 8 }} />
-            <Button variant="primary">
-              <ButtonText>Check</ButtonText>
-            </Button>
-          </Card>
+            <Card pointerEvents="none">
+              <BossRow>
+                <BossAvatar
+                  source={{ uri: getBossImageUrl(item.name) }}
+                  contentFit="cover"
+                />
+                <BossInfo>
+                  <BossName numberOfLines={1}>{item.name}</BossName>
+                  <Chance>
+                    {item.chance ?? 'Unknown'}
+                  </Chance>
+                </BossInfo>
+              </BossRow>
+              <View style={{ height: 8 }} />
+              <Button variant="primary">
+                <ButtonText>Check</ButtonText>
+              </Button>
+            </Card>
+          </TouchableOpacity>
         )}
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}
