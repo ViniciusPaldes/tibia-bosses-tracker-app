@@ -10,6 +10,8 @@ import { BossListItem } from "@/components/ui/BossListItem";
 import { LootRow } from "@/components/ui/LootRow";
 import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
 import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
+import { useRecentSightings } from "@/data/sightings/hooks";
+import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { getBossImageUrl } from "@/utils/images";
@@ -88,6 +90,8 @@ export default function BossDetail() {
   const [labelText, setLabelText] = useState("");
   const labelOpacity = useSharedValue(0);
   const labelTranslate = useSharedValue(8);
+  const [world, setWorld] = useState<string | null>(null);
+  const { data: recent } = useRecentSightings(world, 10);
 
   const labelStyle = useAnimatedStyle(() => ({
     opacity: labelOpacity.value,
@@ -106,6 +110,11 @@ export default function BossDetail() {
     labelOpacity.value = withTiming(1, { duration: 180 });
     labelTranslate.value = withTiming(0, { duration: 180 });
   };
+
+  // Load current world to filter recent sightings
+  useLayoutEffect(() => {
+    loadSelectedWorld().then(setWorld);
+  }, []);
 
   if (!parsed) return null;
   return (
@@ -138,7 +147,18 @@ export default function BossDetail() {
 
         <Section>
           <SectionTitle>Last sightings</SectionTitle>
-          
+          {recent?.length ? (
+            recent
+              .filter((s) => s.bossName === parsed.name)
+              .slice(0, 5)
+              .map((s) => (
+                <Text key={s.id} style={{ color: '#b0b0b0', marginBottom: 6 }}>
+                  {(s.playerName ?? 'Someone')} • {s.createdAt ? new Date(s.createdAt.toDate?.() ?? Date.now()).toLocaleTimeString() : 'just now'}
+                </Text>
+              ))
+          ) : (
+            <Text style={{ color: '#b0b0b0' }}>No recent reports</Text>
+          )}
         </Section>
 
         <Section>
