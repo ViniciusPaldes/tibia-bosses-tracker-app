@@ -13,9 +13,7 @@ export type SubmitSightingInput = {
   world: string;
   bossName: string;
   status: SightingStatus;
-  coords?: string;
   note?: string;
-  playerName?: string;
 };
 
 export const db = getFirestore(app);
@@ -25,7 +23,7 @@ export { Timestamp };
 const lastSubmitByKey: Record<string, number> = {};
 
 export async function submitSighting(input: SubmitSightingInput): Promise<string> {
-  const { world, bossName, status, coords, note, playerName } = input;
+  const { world, bossName, status, note } = input;
 
   if (!world || !bossName) {
     throw new Error('Missing required fields: world and bossName');
@@ -50,14 +48,15 @@ export async function submitSighting(input: SubmitSightingInput): Promise<string
 
   const expiresAt = Timestamp.fromMillis(now + 24 * 60 * 60 * 1000);
 
+  const playerName = auth.currentUser?.displayName || (auth.currentUser?.email ? auth.currentUser.email.split('@')[0] : undefined);
+
   const docRef = await addDoc(collection(db, 'sightings'), {
     world,
     bossName,
     status,
-    coords: coords || null,
     note: note || null,
     playerId: uid,
-    playerName: playerName || null,
+    playerName,
     createdAt: serverTimestamp(),
     expiresAt,
   });
