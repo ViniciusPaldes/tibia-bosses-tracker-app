@@ -8,6 +8,7 @@ import styled from "styled-components/native";
 
 import { BossListItem } from "@/components/ui/BossListItem";
 import { LootRow } from "@/components/ui/LootRow";
+import SightingListItem from "@/components/ui/SightingListItem";
 import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
 import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
 import { useRecentSightings } from "@/data/sightings/hooks";
@@ -69,6 +70,7 @@ const FloatingLabelText = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
   fontSize: 12,
 }));
+
 
 export default function BossDetail() {
   const { boss, id } = useLocalSearchParams<{ boss?: string; id?: string }>();
@@ -153,9 +155,12 @@ export default function BossDetail() {
               .filter((s) => s.bossName === parsed.name)
               .slice(0, 5)
               .map((s) => (
-                <Text key={s.id} style={{ color: '#b0b0b0', marginBottom: 6 }}>
-                  {(s.playerName ?? 'Someone')} • {s.createdAt ? new Date(s.createdAt.toDate?.() ?? Date.now()).toLocaleTimeString() : 'just now'}
-                </Text>
+                <SightingListItem
+                  key={s.id}
+                  status={s.status as any}
+                  title={s.playerName ?? 'Someone'}
+                  subtitle={s.createdAt ? new Date(s.createdAt.toDate?.() ?? Date.now()).toLocaleTimeString() : 'just now'}
+                />
               ))
           ) : (
             <Text style={{ color: '#b0b0b0' }}>No recent reports</Text>

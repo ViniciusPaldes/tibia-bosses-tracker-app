@@ -1,4 +1,5 @@
 // components/ui/TimelinePanel.tsx
+import SightingListItem from '@/components/ui/SightingListItem';
 import { useRecentSightings } from '@/data/sightings/hooks';
 import { timeAgo } from '@/data/time';
 import { loadSelectedWorld } from '@/data/worlds/hooks';
@@ -96,23 +97,12 @@ export default function TimelinePanel() {
             keyExtractor={(i) => i.id}
             contentInsetAdjustmentBehavior="automatic"
             renderItem={({ item }) => (
-              item.status === 'killed' ? (
-                <RowKilled accessibilityHint="Killed">
-                  <Primary>
-                    {item.bossName} <Primary style={{ color: '#b94a48', fontWeight: '700' }}>Killed</Primary>
-                  </Primary>
-                  <Secondary>
-                    {item.playerName ?? 'Someone'} • {item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}
-                  </Secondary>
-                </RowKilled>
-              ) : (
-                <Row>
-                  <Primary>{item.bossName}</Primary>
-                  <Secondary>
-                    {item.playerName ?? 'Someone'} • {item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}
-                  </Secondary>
-                </Row>
-              )
+              <SightingListItem
+                status={item.status as any}
+                title={item.bossName}
+                subtitle={`${item.playerName ?? 'Someone'} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}`}
+                accessibilityHint={item.status === 'killed' ? 'Killed' : undefined}
+              />
             )}
           />
         </PanelSafeArea>
