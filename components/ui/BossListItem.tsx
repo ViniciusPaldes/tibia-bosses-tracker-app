@@ -112,6 +112,12 @@ const KilledChipText = styled.Text(() => ({
     fontSize: 12,
 }));
 
+// New left column groups name, city and last-seen
+const Left = styled.View({
+    flex: 1,
+    minWidth: 0,
+});
+
 function chanceColor(theme: any, chance: Chance) {
     switch (chance) {
         case 'high':
@@ -142,9 +148,17 @@ export function BossListItem({
             <Avatar source={{ uri: imageUrl }} contentFit="contain" />
             <Info>
                 <Row>
-                    <TitleWrap>
-                        <Name numberOfLines={1} ellipsizeMode="tail">{name}</Name>
-                    </TitleWrap>
+                    <Left>
+                        <TitleWrap>
+                            <Name numberOfLines={1} ellipsizeMode="tail">{name}</Name>
+                        </TitleWrap>
+                        {city ? <City numberOfLines={1} ellipsizeMode="tail">{city}</City> : null}
+                        <Meta>
+                            {typeof daysSince === 'number' ? (
+                                <Muted>last seen {daysSince === 0 ? 'today' : `${daysSince}d ago`}</Muted>
+                            ) : null}
+                        </Meta>
+                    </Left>
                     <Badges>
                         <Badge bg={chanceColor({ tokens: { colors: { success: '#4CAF50', warning: '#FF9800' } } }, chance)}>
                             <BadgeText>{chance}</BadgeText>
@@ -156,15 +170,6 @@ export function BossListItem({
                         ) : null}
                     </Badges>
                 </Row>
-
-                {city ? <City>{city}</City> : null}
-
-                <Meta>
-                    {typeof daysSince === 'number' ? (
-                        <Muted>last seen {daysSince === 0 ? 'today' : `${daysSince}d ago`}</Muted>
-                    ) : null}
-                    {/* Add more muted bits later (e.g., region) */}
-                </Meta>
             </Info>
         </Card >
     );
