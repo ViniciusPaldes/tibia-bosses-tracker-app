@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
+import { AppState } from 'react-native';
 import { SELECTED_WORLD_KEY, WORLD_LIST_KEY } from '../cache/keys';
 import { getWithTTL, setWithTTL } from '../cache/storage';
-import { BossChances, fetchBossChances, getCachedBossChances, setCachedBossChances, sortBossesByChance } from '../chances';
+import { BossChances, ensureBossChancesForToday, fetchBossChances, getCachedBossChances, setCachedBossChances, sortBossesByChance } from '../chances';
 import { fetchWorlds } from './api';
 
 const TTL_90_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
@@ -106,6 +107,26 @@ export function useBossChances(selectedWorld: string | null) {
   useEffect(() => {
     load();
   }, [load]);
+
+  // Auto-refresh when app returns to foreground and the day boundary (08:10 UTC) may have crossed
+  useEffect(() => {
+    if (!selectedWorld) return;
+    let mounted = true;
+    const subscription = AppState.addEventListener('change', async (state) => {
+      if (!mounted) return;
+      if (state !== 'active') return;
+      try {
+        const fresh = await ensureBossChancesForToday(selectedWorld);
+        setData(sortBossesByChance(fresh));
+      } catch {
+        // Silent fail
+      }
+    });
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+  }, [selectedWorld]);
 
   const refetch = useCallback(() => load(), [load]);
 

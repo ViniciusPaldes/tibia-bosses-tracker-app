@@ -97,6 +97,22 @@ export async function setCachedBossChances(world: string, date: string, data: Bo
   await setWithTTL(buildCacheKey(world, date), data);
 }
 
+// Check if we already have boss chances cached for the current target date (08:00 UTC boundary)
+export async function hasTodayBossChances(world: string): Promise<boolean> {
+  const date = getTargetDateUTC(new Date());
+  const cached = await getWithTTL<BossChances>(buildCacheKey(world, date), TTL_1_DAY_MS);
+  return Array.isArray(cached) && cached.length > 0;
+}
+
+// Ensure today's chances exist in cache (08:10 cutoff); if missing, fetch and persist
+export async function ensureBossChancesForToday(world: string): Promise<BossChances> {
+  const cached = await getCachedBossChances(world);
+  if (cached && cached.length) return cached;
+  const { date, data } = await fetchBossChances(world);
+  await setCachedBossChances(world, date, data);
+  return data;
+}
+
 export function sortBossesByChance<T extends { chance?: BossChanceLevel }>(items: T[]): T[] {
   const order: Record<BossChanceLevel, number> = {
     high: 1,
