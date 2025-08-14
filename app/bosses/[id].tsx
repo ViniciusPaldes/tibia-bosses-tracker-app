@@ -2,16 +2,16 @@
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
 import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
-import { useLayoutEffect, useMemo } from "react";
-import { FlatList, Text, View } from "react-native";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 import styled from "styled-components/native";
 
+import { LootRow } from "@/components/ui/LootRow";
 import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
 import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
-import { getLootImageUrl } from "@/utils/images";
-import { Image } from "expo-image";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 
 const Section = styled.View(({ theme }) => ({
@@ -44,10 +44,18 @@ const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, leve
   } as any;
 });
 
-const LootImage = styled(Image)(({ theme }) => ({
-  width: 48,
-  height: 48,
-  marginHorizontal: 8,
+const FloatingLabel = styled(Animated.View)(({ theme }) => ({
+  marginTop: 8,
+  alignSelf: 'center',
+  backgroundColor: 'rgba(0,0,0,0.7)',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 999,
+}));
+
+const FloatingLabelText = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontSize: 12,
 }));
 
 export default function BossDetail() {
@@ -66,6 +74,28 @@ export default function BossDetail() {
   useLayoutEffect(() => {
     navigation.setOptions({ title: parsed?.name ?? id ?? "Boss Detail" });
   }, [parsed, id, navigation]);
+
+  const [labelText, setLabelText] = useState("");
+  const labelOpacity = useSharedValue(0);
+  const labelTranslate = useSharedValue(8);
+
+  const labelStyle = useAnimatedStyle(() => ({
+    opacity: labelOpacity.value,
+    transform: [{ translateY: labelTranslate.value }],
+  }));
+
+  const handleSelect = (name: string | null) => {
+    if (!name) {
+      labelOpacity.value = withTiming(0, { duration: 150 });
+      labelTranslate.value = withTiming(8, { duration: 150 });
+      return;
+    }
+    // cross-fade update
+    labelOpacity.value = withTiming(0, { duration: 90 });
+    setLabelText(name);
+    labelOpacity.value = withTiming(1, { duration: 180 });
+    labelTranslate.value = withTiming(0, { duration: 180 });
+  };
 
   return (
     initializing ? null : !user ? (
@@ -105,23 +135,16 @@ export default function BossDetail() {
         <Section>
           <Text style={{ color: "#fff", marginBottom: 6, textAlign: 'center' }}>Loot</Text>
           {parsed?.loots?.length ? (
-            <FlatList
-              data={parsed.loots}
-              keyExtractor={(i) => i}
-              renderItem={({ item }) => (
-                <View style={{ alignItems: 'center' }}>
-                  <LootImage
-                    source={{ uri: getLootImageUrl(item) }}
-                    contentFit="contain"
-                    accessibilityLabel={item}
-                  />
-                  <Text style={{ color: '#b0b0b0', marginTop: 4 }}>{item}</Text>
-                </View>
-              )}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 8 }}
-            />
+            <>
+              <LootRow items={parsed.loots} onSelect={handleSelect} />
+              <FloatingLabel
+                style={labelStyle}
+                accessibilityLiveRegion="polite"
+                accessible
+              >
+                <FloatingLabelText>{labelText}</FloatingLabelText>
+              </FloatingLabel>
+            </>
           ) : (
             <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>Unknown</Text>
           )}
