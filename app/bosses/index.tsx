@@ -1,18 +1,24 @@
 // app/bosses/index.tsx
-import { Button, ButtonText } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
 import { format } from "date-fns";
 import { Image } from "expo-image";
 import { Redirect, router, useNavigation } from "expo-router";
-import { useLayoutEffect } from "react";
+import { useCallback, useLayoutEffect, useMemo } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
+import { BossListItem } from "@/components/ui/BossListItem";
+import { BOSSES_FILTERS_KEY } from "@/data/cache/keys";
+import { getWithTTL, setWithTTL } from "@/data/cache/storage";
+import { useRecentSightings } from "@/data/sightings/hooks";
+import { loadSelectedWorld, useBossChances } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import { useTheme } from "styled-components/native";
 
 const TopBar = styled.View(() => ({
@@ -93,15 +99,31 @@ const BossInfo = styled.View(() => ({
   flex: 1,
 }));
 
-const MOCK_KILLED = [
-  { id: "draptor", name: "Draptor", chance: "High" },
-  { id: "ghazbaran", name: "Ghazbaran", chance: "Low" },
-];
+const ChipRow = styled.View(({ theme }) => ({
+  flexDirection: "row",
+  flexWrap: "wrap",
+  marginBottom: theme.tokens.spacing(1.5),
+}));
 
-const MOCK_LIST = [
-  { id: "orkus", name: "Orshabaal", chancePercent: 72 },
-  { id: "morg", name: "Morgaroth", chancePercent: 38 },
-];
+const Chip = styled.TouchableOpacity(({ theme }) => ({
+  flexDirection: 'row',
+  alignItems: 'center',
+  paddingVertical: 6,
+  paddingHorizontal: 10,
+  borderRadius: 999,
+  borderWidth: 1,
+  marginRight: theme.tokens.spacing(1),
+  marginBottom: theme.tokens.spacing(1),
+  backgroundColor: theme.tokens.colors.card,
+  borderColor: 'rgba(255,255,255,0.12)',
+}));
+
+const ChipText = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontFamily: theme.tokens.typography.fonts.body,
+  marginRight: 6,
+}));
+
 
 export const options = { title: "Bosses" };
 
@@ -110,8 +132,16 @@ export default function BossList() {
   const theme = useTheme();
   const todayLabel = format(new Date(), "EEE, MMM d");
   const { user, initializing } = useAuth();
+  const [selectedWorld, setSelectedWorld] = useState<string | null>(null);
+  useEffect(() => {
+    loadSelectedWorld().then((w) => setSelectedWorld(w));
+  }, []);
+  const { data: chances, loading: chancesLoading } = useBossChances(selectedWorld);
+  const { killedSet } = useRecentSightings(selectedWorld, 200);
 
   const { open } = useModals();
+  const [filters, setFilters] = useState<{ chance: 'low' | 'medium' | 'high' | null; city: string | null; search: string | null } | null>(null);
+  const [searchInput, setSearchInput] = useState<string>("");
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -138,7 +168,7 @@ export default function BossList() {
               color={theme.tokens.colors.text}
             />
           </TouchableOpacity>
-         
+
           <TouchableOpacity
             onPress={() => open("timeline", true)}
             accessibilityLabel="Open timeline"
@@ -153,72 +183,155 @@ export default function BossList() {
       ),
     });
   }, [navigation, theme, open]);
+  const loadFilters = useCallback(async () => {
+    const saved = await getWithTTL<any>(BOSSES_FILTERS_KEY, Number.MAX_SAFE_INTEGER);
+    setFilters({
+      chance: (saved?.chance as any) ?? null,
+      city: typeof saved?.city === 'string' ? saved.city : null,
+      search: typeof saved?.search === 'string' && saved.search.trim() ? saved.search : null,
+    });
+    setSearchInput(typeof saved?.search === 'string' ? saved.search : "");
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadFilters();
+    }, [loadFilters])
+  );
   if (initializing) return null;
   if (!user) return <Redirect href="/onboarding" />;
+  const killedYesterday = chances.filter((c) => c.daysSince === 1);
+  const killedYesterdayData = killedYesterday.map((c) => ({ ...c, id: c.id ?? c.name }));
+  const filteredChances = useMemo(() => {
+    let list = chances;
+    if (filters?.chance) {
+      list = list.filter((i) => (i.chance?.toLowerCase?.() ?? '') === filters.chance);
+    }
+    if (filters?.city) {
+      list = list.filter((i) => i.city === filters.city);
+    }
+    if (filters?.search && filters.search.trim()) {
+      const s = filters.search.trim().toLowerCase();
+      list = list.filter((i) => i.name.toLowerCase().includes(s));
+    }
+    return list;
+  }, [chances, filters]);
+
+  const removeFilter = useCallback(async (key: 'chance' | 'city' | 'search') => {
+    const saved = await getWithTTL<any>(BOSSES_FILTERS_KEY, Number.MAX_SAFE_INTEGER);
+    const next = { ...(saved ?? {}), [key]: null } as any;
+    if (key === 'search') next.search = null;
+    await setWithTTL(BOSSES_FILTERS_KEY, next);
+    await loadFilters();
+  }, [loadFilters]);
   return (
     <Screen>
-      <PageHeader>
-        <PageTitle>Bosses for Today</PageTitle>
-        <PageSubtitle>{todayLabel}</PageSubtitle>
-      </PageHeader>
+
       <TopBar>
-        <Search placeholder="Search bosses..." placeholderTextColor="#888" />
+        <Search
+          placeholder="Search bosses..."
+          placeholderTextColor="#888"
+          value={searchInput}
+          onChangeText={setSearchInput}
+          returnKeyType="search"
+          onSubmitEditing={async () => {
+            const term = searchInput.trim();
+            const saved = await getWithTTL<any>(BOSSES_FILTERS_KEY, Number.MAX_SAFE_INTEGER);
+            await setWithTTL(BOSSES_FILTERS_KEY, {
+              ...(saved ?? {}),
+              search: term.length ? term : null,
+            });
+            await loadFilters();
+          }}
+        />
       </TopBar>
 
+      {filters && (filters.chance || filters.city || (filters.search && filters.search.trim())) ? (
+        <ChipRow>
+          {filters.search && (
+            <Chip onPress={() => removeFilter('search')}>
+              <ChipText>Search: {filters.search}</ChipText>
+              <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
+            </Chip>
+          )}
+          {filters.chance && (
+            <Chip onPress={() => removeFilter('chance')}>
+              <ChipText>
+                Chance: {
+                  filters.chance === 'low'
+                    ? 'Low'
+                    : filters.chance === 'medium'
+                    ? 'Mid'
+                    : filters.chance === 'high'
+                    ? 'High'
+                    : filters.chance === 'no chance'
+                    ? 'No Chance'
+                    : 'Lost Track'
+                }
+              </ChipText>
+              <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
+            </Chip>
+          )}
+          {filters.city && (
+            <Chip onPress={() => removeFilter('city')}>
+              <ChipText>City: {filters.city}</ChipText>
+              <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
+            </Chip>
+          )}
+        </ChipRow>
+      ) : null}
+
       <FlatList
-        data={MOCK_LIST}
+        data={filteredChances.map((c) => ({ ...c, id: c.id ?? c.name }))}
         keyExtractor={(i) => i.id}
         ListHeaderComponent={
           <View>
-            <SectionTitle>Bosses Killed Yesterday</SectionTitle>
-            <Horizontal
-              data={MOCK_KILLED}
-              keyExtractor={(i: any) => i.id}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }: any) => (
-                <Card style={{ marginRight: 12, width: 200 }}>
-                  <BossRow>
-                    <BossAvatar
-                      source={{ uri: getBossImageUrl(item.name) }}
-                      contentFit="cover"
-                    />
-                    <BossInfo>
-                      <BossName numberOfLines={1}>{item.name}</BossName>
-                    </BossInfo>
-                  </BossRow>
-                </Card>
-              )}
-              style={{ marginBottom: 12 }}
-            />
+            {killedYesterdayData.length > 0 && (
+              <View style={{ marginBottom: 12 }}>
+                <SectionTitle>Bosses Killed Yesterday</SectionTitle>
+                <Horizontal
+                  data={killedYesterdayData}
+                  keyExtractor={(i: any) => i.id}
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({ item }: any) => (
+                    <Card style={{ marginRight: 12, width: 200 }}>
+                      <BossRow>
+                        <BossAvatar
+                          source={{ uri: getBossImageUrl(item.name) }}
+                          contentFit="cover"
+                        />
+                        <BossInfo>
+                          <BossName numberOfLines={1}>{item.name}</BossName>
+                        </BossInfo>
+                      </BossRow>
+                    </Card>
+                  )}
+                  style={{ marginBottom: 12 }}
+                />
+              </View>
+            )}
+            <PageHeader>
+              <PageTitle>Today’s Bosses</PageTitle>
+              <PageSubtitle>{todayLabel}</PageSubtitle>
+            </PageHeader>
           </View>
         }
         renderItem={({ item }) => (
-          <Card
-            onTouchEnd={() =>
+          <BossListItem
+            name={item.name}
+            city={item.city}
+            daysSince={item.daysSince}
+            chance={(item.chance ?? 'low') as any}
+            imageUrl={getBossImageUrl(item.name)}
+            killed={killedSet?.has?.(item.name)}
+            onPress={() =>
               router.push({
-                pathname: "/bosses/[id]",
-                params: { id: item.id, name: item.name },
+                pathname: '/bosses/[id]',
+                params: { id: item.id, boss: JSON.stringify(item) },
               })
             }
-          >
-            <BossRow>
-              <BossAvatar
-                source={{ uri: getBossImageUrl(item.name) }}
-                contentFit="cover"
-              />
-              <BossInfo>
-                <BossName numberOfLines={1}>{item.name}</BossName>
-                <Chance>
-                  {item.chancePercent}% chance • last checked 1h ago
-                </Chance>
-              </BossInfo>
-            </BossRow>
-            <View style={{ height: 8 }} />
-            <Button variant="primary">
-              <ButtonText>Check</ButtonText>
-            </Button>
-          </Card>
+          />
         )}
         contentContainerStyle={{ paddingBottom: 24 }}
         showsVerticalScrollIndicator={false}

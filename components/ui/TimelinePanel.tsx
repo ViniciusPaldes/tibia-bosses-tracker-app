@@ -1,6 +1,8 @@
 // components/ui/TimelinePanel.tsx
-import { listRecentSightings } from '@/data/repo/bossRepo';
+import SightingListItem from '@/components/ui/SightingListItem';
+import { useRecentSightings } from '@/data/sightings/hooks';
 import { timeAgo } from '@/data/time';
+import { loadSelectedWorld } from '@/data/worlds/hooks';
 import { useModals } from '@/state/modals';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, FlatList, Pressable, View } from 'react-native';
@@ -43,6 +45,12 @@ const Row = styled.View(({ theme }) => ({
   borderBottomColor: theme.tokens.colors.backgroundDark,
 }));
 
+const RowKilled = styled(Row)(({ theme }) => ({
+  borderLeftWidth: 3,
+  borderLeftColor: theme.tokens.colors.danger,
+  paddingLeft: 10,
+}));
+
 const Primary = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
   fontSize: theme.tokens.typography.sizes.body,
@@ -54,29 +62,22 @@ const Secondary = styled.Text(({ theme }) => ({
   marginTop: 2,
 }));
 
-type Item = {
-  id: string;
-  bossName: string;
-  player: string;
-  at: Date;
-  status: 'watched' | 'killed';
-};
-
 export default function TimelinePanel() {
   const { modals, close } = useModals();
   const visible = !!modals.timeline;
-
-  const [items, setItems] = useState<Item[]>([]);
+  const [world, setWorld] = useState<string | null>(null);
   const tx = useRef(new Animated.Value(Dimensions.get('window').width)).current;
 
   useEffect(() => {
     if (visible) {
-      listRecentSightings(30).then((rows: any[]) => setItems(rows as Item[]));
+      loadSelectedWorld().then(setWorld);
       Animated.timing(tx, { toValue: 0, duration: 200, useNativeDriver: true }).start();
     } else {
       Animated.timing(tx, { toValue: Dimensions.get('window').width, duration: 180, useNativeDriver: true }).start();
     }
   }, [visible, tx]);
+
+  const { data } = useRecentSightings(world, 50);
 
   if (!visible) return null;
 
@@ -92,16 +93,16 @@ export default function TimelinePanel() {
         <PanelSafeArea edges={['top', 'right', 'bottom']}>
           <Title>Recent Sightings</Title>
           <FlatList
-            data={items}
+            data={data}
             keyExtractor={(i) => i.id}
             contentInsetAdjustmentBehavior="automatic"
             renderItem={({ item }) => (
-              <Row>
-                <Primary>{item.bossName}</Primary>
-                <Secondary>
-                  {item.player} • {timeAgo(new Date(item.at))}
-                </Secondary>
-              </Row>
+              <SightingListItem
+                status={item.status as any}
+                title={item.bossName}
+                subtitle={`${item.playerName ?? 'Someone'} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}`}
+                accessibilityHint={item.status === 'killed' ? 'Killed' : undefined}
+              />
             )}
           />
         </PanelSafeArea>

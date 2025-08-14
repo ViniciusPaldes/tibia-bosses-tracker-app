@@ -2,12 +2,21 @@
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
 import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
-import { useLayoutEffect } from "react";
-import { Text } from "react-native";
+import { useLayoutEffect, useMemo, useState } from "react";
+import { Text, View } from "react-native";
 import styled from "styled-components/native";
 
+import { BossListItem } from "@/components/ui/BossListItem";
+import { LootRow } from "@/components/ui/LootRow";
+import SightingListItem from "@/components/ui/SightingListItem";
+import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
+import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
+import { useRecentSightings } from "@/data/sightings/hooks";
+import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
+import { getBossImageUrl } from "@/utils/images";
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 
 const Section = styled.View(({ theme }) => ({
@@ -17,47 +26,176 @@ const Section = styled.View(({ theme }) => ({
   marginBottom: 12,
 }));
 
+const SectionTitle = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontSize: theme.tokens.typography.sizes.h3,
+  fontFamily: theme.tokens.typography.fonts.title,
+  fontWeight: 'bold',
+  marginBottom: 8,
+}));
+
+const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, level }) => {
+  const map: Record<string, string> = {
+    high: theme.tokens.colors.success,
+    medium: theme.tokens.colors.warning,
+    low: '#7a7a7a',
+    'lost track': "#555",
+    'no chance': theme.tokens.colors.danger,
+  } as const;
+  const bg = (level && map[level]) || theme.tokens.colors.backgroundDark;
+  return {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: theme.tokens.radius,
+    backgroundColor: bg,
+    overflow: 'hidden',
+    color: '#111',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    fontSize: 12,
+  } as any;
+});
+
+const FloatingLabel = styled(Animated.View)(({ theme }) => ({
+  marginTop: 8,
+  alignSelf: 'center',
+  backgroundColor: 'rgba(0,0,0,0.7)',
+  paddingVertical: 6,
+  paddingHorizontal: 12,
+  borderRadius: 999,
+}));
+
+const FloatingLabelText = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontSize: 12,
+}));
+
+
 export default function BossDetail() {
-  const { name } = useLocalSearchParams<{ name?: string }>();
+  const { boss, id } = useLocalSearchParams<{ boss?: string; id?: string }>();
   const navigation = useNavigation();
   const { user, initializing } = useAuth();
 
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: name ?? "Boss Detail" });
-  }, [name, navigation]);
+  const parsed: BossChanceItem | null = useMemo(() => {
+    try {
+      return boss ? (JSON.parse(boss) as BossChanceItem) : null;
+    } catch {
+      return null;
+    }
+  }, [boss]);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: "Boss Detail" });
+  }, [parsed, id, navigation]);
+
+  const [labelText, setLabelText] = useState("");
+  const labelOpacity = useSharedValue(0);
+  const labelTranslate = useSharedValue(8);
+  const [world, setWorld] = useState<string | null>(null);
+  const { data: recent } = useRecentSightings(world, 10);
+
+  const labelStyle = useAnimatedStyle(() => ({
+    opacity: labelOpacity.value,
+    transform: [{ translateY: labelTranslate.value }],
+  }));
+
+  const handleSelect = (name: string | null) => {
+    if (!name) {
+      labelOpacity.value = withTiming(0, { duration: 150 });
+      labelTranslate.value = withTiming(8, { duration: 150 });
+      return;
+    }
+    // cross-fade update
+    labelOpacity.value = withTiming(0, { duration: 90 });
+    setLabelText(name);
+    labelOpacity.value = withTiming(1, { duration: 180 });
+    labelTranslate.value = withTiming(0, { duration: 180 });
+  };
+
+  // Load current world to filter recent sightings
+  useLayoutEffect(() => {
+    loadSelectedWorld().then(setWorld);
+  }, []);
+
+  if (!parsed) return null;
   return (
     initializing ? null : !user ? (
       <Redirect href="/onboarding" />
     ) : (
-    <Screen>
-      <Section>
-        <Text style={{ color: "#fff" }}>Location: Edron, Dragon Lair</Text>
-      </Section>
+      <Screen scrollable>
+        <BossListItem
+          name={parsed.name}
+          chance={parsed.chance}
+          imageUrl={getBossImageUrl(parsed.name)}
+          onPress={() => { }}
+          city={parsed.city}
+          daysSince={parsed.daysSince}
+          killed={Boolean(recent?.find((s) => s.bossName === parsed.name && s.status === 'killed'))}
+        />
+        <Section>
+          <SectionTitle>Location</SectionTitle>
+          {parsed?.location?.length ? (
+            <>
+              {parsed.location.map((coord, idx) => (
+                <View key={`${coord}-${idx}`} style={{ marginBottom: 8 }}>
+                  <StaticTibiaMap coord={coord} height={250} />
+                </View>
+              ))}
+            </>
+          ) : (
+            <Text style={{ color: "#b0b0b0" }}>Unknown</Text>
+          )}
+        </Section>
 
-      <Section>
-        <Text style={{ color: "#fff", marginBottom: 6 }}>Last Sightings</Text>
-        <Text style={{ color: "#b0b0b0" }}>2025-08-08 10:21 — Vinicius</Text>
-      </Section>
+        <Section>
+          <SectionTitle>Last sightings</SectionTitle>
+          {recent?.length ? (
+            recent
+              .filter((s) => s.bossName === parsed.name)
+              .slice(0, 5)
+              .map((s) => (
+                <SightingListItem
+                  key={s.id}
+                  status={s.status as any}
+                  title={s.playerName ?? 'Someone'}
+                  subtitle={s.createdAt ? new Date(s.createdAt.toDate?.() ?? Date.now()).toLocaleTimeString() : 'just now'}
+                />
+              ))
+          ) : (
+            <Text style={{ color: '#b0b0b0' }}>No recent reports</Text>
+          )}
+        </Section>
 
-      <Section>
-        <Text style={{ color: "#fff", marginBottom: 6 }}>Loot</Text>
-        <Text style={{ color: "#b0b0b0" }}>
-          Dragon Scale • Gold • Boots of Haste
-        </Text>
-      </Section>
+        <Section>
+          <SectionTitle>Notable Loot</SectionTitle>
+          {parsed?.loots?.length ? (
+            <>
+              <LootRow items={parsed.loots} onSelect={handleSelect} />
+              <FloatingLabel
+                style={labelStyle}
+                accessibilityLiveRegion="polite"
+                accessible
+              >
+                <FloatingLabelText>{labelText}</FloatingLabelText>
+              </FloatingLabel>
+            </>
+          ) : (
+            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>None</Text>
+          )}
+        </Section>
 
-      <Button
-        variant="primary"
-        onPress={() =>
-          useModals
-            .getState()
-            .open("bossStatus", { bossId: "orshabaal", bossName: "Orshabaal" })
-        }
-      >
-        <ButtonText>Mark as Watched</ButtonText>
-      </Button>
-    </Screen>
+        <Button
+          variant="primary"
+          onPress={() =>
+            useModals
+              .getState()
+              .open("bossStatus", { bossId: parsed?.id ?? (parsed?.name ?? 'unknown'), bossName: parsed?.name ?? 'Unknown' })
+          }
+        >
+          <ButtonText>Check this Boss</ButtonText>
+        </Button>
+      </Screen>
     )
   );
 }
