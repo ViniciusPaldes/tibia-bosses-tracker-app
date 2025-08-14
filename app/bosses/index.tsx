@@ -12,6 +12,7 @@ import styled from "styled-components/native";
 import { BossListItem } from "@/components/ui/BossListItem";
 import { BOSSES_FILTERS_KEY } from "@/data/cache/keys";
 import { getWithTTL, setWithTTL } from "@/data/cache/storage";
+import { useRecentSightings } from "@/data/sightings/hooks";
 import { loadSelectedWorld, useBossChances } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
@@ -136,6 +137,7 @@ export default function BossList() {
     loadSelectedWorld().then((w) => setSelectedWorld(w));
   }, []);
   const { data: chances, loading: chancesLoading } = useBossChances(selectedWorld);
+  const { killedSet } = useRecentSightings(selectedWorld, 200);
 
   const { open } = useModals();
   const [filters, setFilters] = useState<{ chance: 'low' | 'medium' | 'high' | null; city: string | null; search: string | null } | null>(null);
@@ -322,6 +324,7 @@ export default function BossList() {
             daysSince={item.daysSince}
             chance={(item.chance ?? 'low') as any}
             imageUrl={getBossImageUrl(item.name)}
+            killed={killedSet?.has?.(item.name)}
             onPress={() =>
               router.push({
                 pathname: '/bosses/[id]',

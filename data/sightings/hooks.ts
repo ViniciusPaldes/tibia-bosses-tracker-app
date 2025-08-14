@@ -1,7 +1,7 @@
 import { getWithTTL, setWithTTL } from '@/data/cache/storage';
 import { db } from '@/services/firestore';
 import { collection, limit as limitQ, onSnapshot, orderBy, query, where, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Sighting } from './types';
 
 const TTL_24_HOURS_MS = 24 * 60 * 60 * 1000;
@@ -54,7 +54,27 @@ export function useRecentSightings(world: string | null, limit: number = 50) {
   }, [load]);
 
   const refetch = useCallback(() => load(), [load]);
-  return { data, loading, error, refetch } as const;
+  // Build latestByBoss and killedSet from the sorted snapshot (desc by createdAt)
+  const latestByBoss = useMemo(() => {
+    const map: Record<string, { status: 'spotted' | 'killed' | 'checked'; createdAt: any } | undefined> = {};
+    for (const s of data) {
+      const name = s.bossName;
+      if (!name) continue;
+      if (map[name]) continue; // first occurrence is latest due to ordering
+      map[name] = { status: s.status, createdAt: s.createdAt } as any;
+    }
+    return map as Record<string, { status: 'spotted' | 'killed' | 'checked'; createdAt: any }>;
+  }, [data]);
+
+  const killedSet = useMemo(() => {
+    const set = new Set<string>();
+    Object.entries(latestByBoss).forEach(([name, info]) => {
+      if (info?.status === 'killed') set.add(name);
+    });
+    return set;
+  }, [latestByBoss]);
+
+  return { data, loading, error, refetch, latestByBoss, killedSet } as const;
 }
 
 

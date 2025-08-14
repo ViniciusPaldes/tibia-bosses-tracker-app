@@ -12,6 +12,7 @@ export type BossListItemProps = {
     chance: Chance;
     imageUrl: string;            // e.g., getBossImageUrl(name)
     onPress: () => void;
+    killed?: boolean;
 };
 
 const Card = styled(Pressable)(({ theme }) => ({
@@ -78,6 +79,10 @@ const Muted = styled.Text(({ theme }) => ({
     fontSize: 14,
 }));
 
+const Badges = styled.View({
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+});
 const Badge = styled.View<{ bg: string }>(({ bg }) => ({
     paddingVertical: 4,
     paddingHorizontal: 10,
@@ -91,6 +96,21 @@ const BadgeText = styled.Text({
     textTransform: 'uppercase',
     fontSize: 12,
 });
+
+const KilledChip = styled.View(({ theme }) => ({
+    backgroundColor: theme.tokens.colors.danger,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    marginTop: 8,
+    alignSelf: 'flex-start',
+}));
+
+const KilledChipText = styled.Text(() => ({
+    color: '#111',
+    fontWeight: '700',
+    fontSize: 12,
+}));
 
 function chanceColor(theme: any, chance: Chance) {
     switch (chance) {
@@ -115,6 +135,7 @@ export function BossListItem({
     chance,
     imageUrl,
     onPress,
+    killed = false,
 }: BossListItemProps) {
     return (
         <Card onPress={onPress}>
@@ -124,9 +145,16 @@ export function BossListItem({
                     <TitleWrap>
                         <Name numberOfLines={1} ellipsizeMode="tail">{name}</Name>
                     </TitleWrap>
-                    <Badge bg={chanceColor({ tokens: { colors: { success: '#4CAF50', warning: '#FF9800' } } }, chance)}>
-                        <BadgeText>{chance}</BadgeText>
-                    </Badge>
+                    <Badges>
+                        <Badge bg={chanceColor({ tokens: { colors: { success: '#4CAF50', warning: '#FF9800' } } }, chance)}>
+                            <BadgeText>{chance}</BadgeText>
+                        </Badge>
+                        {killed ? (
+                            <KilledChip accessibilityLabel="Marked as killed">
+                                <KilledChipText>Marked as Killed</KilledChipText>
+                            </KilledChip>
+                        ) : null}
+                    </Badges>
                 </Row>
 
                 {city ? <City>{city}</City> : null}

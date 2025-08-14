@@ -129,6 +129,7 @@ export default function BossDetail() {
           onPress={() => { }}
           city={parsed.city}
           daysSince={parsed.daysSince}
+          killed={Boolean(recent?.find((s) => s.bossName === parsed.name && s.status === 'killed'))}
         />
         <Section>
           <SectionTitle>Location</SectionTitle>

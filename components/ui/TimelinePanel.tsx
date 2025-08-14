@@ -44,6 +44,12 @@ const Row = styled.View(({ theme }) => ({
   borderBottomColor: theme.tokens.colors.backgroundDark,
 }));
 
+const RowKilled = styled(Row)(({ theme }) => ({
+  borderLeftWidth: 3,
+  borderLeftColor: theme.tokens.colors.danger,
+  paddingLeft: 10,
+}));
+
 const Primary = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
   fontSize: theme.tokens.typography.sizes.body,
@@ -90,12 +96,23 @@ export default function TimelinePanel() {
             keyExtractor={(i) => i.id}
             contentInsetAdjustmentBehavior="automatic"
             renderItem={({ item }) => (
-              <Row>
-                <Primary>{item.bossName}</Primary>
-                <Secondary>
-                  {item.playerName ?? 'Someone'} • {item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}
-                </Secondary>
-              </Row>
+              item.status === 'killed' ? (
+                <RowKilled accessibilityHint="Killed">
+                  <Primary>
+                    {item.bossName} <Primary style={{ color: '#b94a48', fontWeight: '700' }}>Killed</Primary>
+                  </Primary>
+                  <Secondary>
+                    {item.playerName ?? 'Someone'} • {item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}
+                  </Secondary>
+                </RowKilled>
+              ) : (
+                <Row>
+                  <Primary>{item.bossName}</Primary>
+                  <Secondary>
+                    {item.playerName ?? 'Someone'} • {item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}
+                  </Secondary>
+                </Row>
+              )
             )}
           />
         </PanelSafeArea>
