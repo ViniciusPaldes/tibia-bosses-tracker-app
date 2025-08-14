@@ -2,7 +2,7 @@
 import { BOSS_CHANCES_KEY_PREFIX } from './cache/keys';
 import { getWithTTL, setWithTTL } from './cache/storage';
 
-export type BossChanceLevel = 'high' | 'medium' | 'low' | 'Lost Track' | 'no chance';
+export type BossChanceLevel = 'high' | 'medium' | 'low' | 'lost track' | 'no chance';
 
 export type BossChanceItem = {
   // id may be absent in API; derive from name when needed
@@ -118,7 +118,7 @@ export function sortBossesByChance<T extends { chance?: BossChanceLevel }>(items
     high: 1,
     medium: 2,
     low: 3,
-    'Lost Track': 4,
+    'lost track': 4,
     'no chance': 5,
   };
   return [...items].sort((a, b) => {

@@ -43,11 +43,11 @@ export default function BossStatusModal() {
   return (
     <Overlay onTouchEnd={() => close("bossStatus")}>
       <Dialog>
-        <Title>Boss Killed?</Title>
-        <Hint>Choose how to update this boss status.</Hint>
+        <Title>Boss Status</Title>
+        <Hint>What happened when you checked this boss? Choose an option below so we can update the records.</Hint>
 
         <Button variant="secondary" onPress={() => close("bossStatus")}>
-          <ButtonText>Notify Others</ButtonText>
+          <ButtonText>Boss Found – Notify Others</ButtonText>
         </Button>
 
         <Button
@@ -55,7 +55,7 @@ export default function BossStatusModal() {
           onPress={() => close("bossStatus")}
           style={{ marginTop: 8 }}
         >
-          <ButtonText>Mark as Dead</ButtonText>
+          <ButtonText>Boss Defeated</ButtonText>
         </Button>
 
         <Button
@@ -63,7 +63,7 @@ export default function BossStatusModal() {
           onPress={() => close("bossStatus")}
           style={{ marginTop: 8 }}
         >
-          <ButtonText>Mark as Watched</ButtonText>
+          <ButtonText>No Boss Found</ButtonText>
         </Button>
       </Dialog>
     </Overlay>

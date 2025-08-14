@@ -6,11 +6,13 @@ import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
 
+import { BossListItem } from "@/components/ui/BossListItem";
 import { LootRow } from "@/components/ui/LootRow";
 import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
 import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
+import { getBossImageUrl } from "@/utils/images";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 
 
@@ -21,12 +23,20 @@ const Section = styled.View(({ theme }) => ({
   marginBottom: 12,
 }));
 
+const SectionTitle = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontSize: theme.tokens.typography.sizes.h3,
+  fontFamily: theme.tokens.typography.fonts.title,
+  fontWeight: 'bold',
+  marginBottom: 8,
+}));
+
 const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, level }) => {
   const map: Record<string, string> = {
     high: theme.tokens.colors.success,
     medium: theme.tokens.colors.warning,
     low: '#7a7a7a',
-    'Lost Track': "#555",
+    'lost track': "#555",
     'no chance': theme.tokens.colors.danger,
   } as const;
   const bg = (level && map[level]) || theme.tokens.colors.backgroundDark;
@@ -72,7 +82,7 @@ export default function BossDetail() {
   }, [boss]);
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: parsed?.name ?? id ?? "Boss Detail" });
+    navigation.setOptions({ title: "Boss Detail" });
   }, [parsed, id, navigation]);
 
   const [labelText, setLabelText] = useState("");
@@ -97,25 +107,26 @@ export default function BossDetail() {
     labelTranslate.value = withTiming(0, { duration: 180 });
   };
 
+  if (!parsed) return null;
   return (
     initializing ? null : !user ? (
       <Redirect href="/onboarding" />
     ) : (
       <Screen scrollable>
+        <BossListItem
+          name={parsed.name}
+          chance={parsed.chance}
+          imageUrl={getBossImageUrl(parsed.name)}
+          onPress={() => { }}
+          city={parsed.city}
+          daysSince={parsed.daysSince}
+        />
         <Section>
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Text style={{ color: "#fff", fontSize: 18 }}>{parsed?.city ?? 'Unknown'}</Text>
-            <Badge level={parsed?.chance as BossChanceLevel}>{parsed?.chance ?? 'Unknown'}</Badge>
-          </View>
-        </Section>
-
-        <Section>
-          <Text style={{ color: "#fff", marginBottom: 6 }}>Location</Text>
+          <SectionTitle>Location</SectionTitle>
           {parsed?.location?.length ? (
             <>
               {parsed.location.map((coord, idx) => (
                 <View key={`${coord}-${idx}`} style={{ marginBottom: 8 }}>
-                  <Text style={{ color: "#b0b0b0", marginBottom: 6 }}>{coord}</Text>
                   <StaticTibiaMap coord={coord} height={250} />
                 </View>
               ))}
@@ -126,14 +137,12 @@ export default function BossDetail() {
         </Section>
 
         <Section>
-          <Text style={{ color: "#fff", marginBottom: 6 }}>Last seen</Text>
-          <Text style={{ color: "#b0b0b0" }}>
-            {parsed?.lastSeen ?? 'Unknown'}{typeof parsed?.daysSince === 'number' ? ` • ${parsed?.daysSince} days ago` : ''}
-          </Text>
+          <SectionTitle>Last sightings</SectionTitle>
+          
         </Section>
 
         <Section>
-          <Text style={{ color: "#fff", marginBottom: 6, textAlign: 'center' }}>Loot</Text>
+          <SectionTitle>Notable Loot</SectionTitle>
           {parsed?.loots?.length ? (
             <>
               <LootRow items={parsed.loots} onSelect={handleSelect} />
@@ -146,7 +155,7 @@ export default function BossDetail() {
               </FloatingLabel>
             </>
           ) : (
-            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>Unknown</Text>
+            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>None</Text>
           )}
         </Section>
 
@@ -158,7 +167,7 @@ export default function BossDetail() {
               .open("bossStatus", { bossId: parsed?.id ?? (parsed?.name ?? 'unknown'), bossName: parsed?.name ?? 'Unknown' })
           }
         >
-          <ButtonText>Mark as Watched</ButtonText>
+          <ButtonText>Check this Boss</ButtonText>
         </Button>
       </Screen>
     )
