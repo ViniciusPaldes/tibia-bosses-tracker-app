@@ -1,5 +1,6 @@
 // state/auth.tsx
 import { auth } from '@/services/firebase';
+import { registerPushToken } from '@/services/push';
 import * as Google from 'expo-auth-session/providers/google';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential, User } from 'firebase/auth';
@@ -30,6 +31,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => unsub();
   }, []);
 
+  // Register push token when signed in
+  useEffect(() => {
+    if (!user) return;
+    registerPushToken(null).catch(() => {});
+  }, [user]);
+
   // Create a single request (must have correct client IDs set in env)
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
@@ -55,8 +62,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const signInWithGoogle = async () => {
     if (!request) return; // not ready yet
-    // ✅ Force Expo proxy so redirect is https://auth.expo.io/@user/slug
-    await promptAsync({ useProxy: true });
+    await promptAsync();
   };
 
   const signOut = async () => auth.signOut();

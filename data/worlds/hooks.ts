@@ -1,3 +1,4 @@
+import { updateUserWorld } from '@/services/push';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { SELECTED_WORLD_KEY, WORLD_LIST_KEY } from '../cache/keys';
@@ -72,6 +73,8 @@ export async function loadSelectedWorld(): Promise<string | null> {
 
 export async function saveSelectedWorld(name: string): Promise<void> {
   await setWithTTL(SELECTED_WORLD_KEY, name);
+  // Also persist to Firestore user profile for world-scoped notifications
+  try { await updateUserWorld(name); } catch {}
 }
 
 // Fetch boss chances for the currently selected world. Cached per day.
