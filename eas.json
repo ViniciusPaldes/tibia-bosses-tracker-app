@@ -10,6 +10,12 @@
         "simulator": true
       }
     },
+    "android-emulator": {
+      "extends": "development",
+      "android": {
+        "buildType": "apk"
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal"

@@ -30,6 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     'expo-router',
     ['expo-splash-screen', { image: './assets/images/splash-icon.png', imageWidth: 200, resizeMode: 'contain', backgroundColor: '#ffffff' }],
     'expo-font',
+    '@react-native-google-signin/google-signin',
   ],
   experiments: { typedRoutes: true },
   extra: {
