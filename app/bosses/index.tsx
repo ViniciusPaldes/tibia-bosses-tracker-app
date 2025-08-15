@@ -2,6 +2,7 @@
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
+import { FlashList } from '@shopify/flash-list';
 import { format } from "date-fns";
 import { Image } from "expo-image";
 import { Redirect, router, useNavigation } from "expo-router";
@@ -281,7 +282,7 @@ export default function BossList() {
         </ChipRow>
       ) : null}
 
-      <FlatList
+      <FlashList
         data={filteredChances.map((c) => ({ ...c, id: c.id ?? c.name }))}
         keyExtractor={(i) => i.id}
         ListHeaderComponent={
