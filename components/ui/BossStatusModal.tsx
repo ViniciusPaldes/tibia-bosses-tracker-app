@@ -50,6 +50,7 @@ export default function BossStatusModal() {
       await submitSighting({ world, bossName: bossStatus!.bossName, status });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e) {
+      console.error(e);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       close("bossStatus");

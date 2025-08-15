@@ -111,7 +111,7 @@ export default function LeftDrawer() {
             <Item onPress={() => { close('drawer'); router.push('/settings'); }}>
               <ItemText>Settings</ItemText>
             </Item>
-            <Item onPress={async () => { close('drawer'); await signOut(); router.replace('/onboarding'); }}>
+            <Item onPress={async () => { close('drawer'); await signOut();}}>
               <ItemText>Logout</ItemText>
             </Item>
           </Menu>

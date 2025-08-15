@@ -2,7 +2,6 @@ import { Button, ButtonText } from "@/components/ui/Button";
 import SelectModal from "@/components/ui/SelectModal";
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from '@/data/worlds/hooks';
 import { useAuth } from "@/state/auth";
-import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
 import styled from "styled-components/native";
 
@@ -59,8 +58,6 @@ export default function Onboarding() {
   }, []);
 
   const canSignIn = !!selected && !loading && worlds.length > 0 && isGoogleReady;
-
-  if (!initializing && user) return <Redirect href="/bosses" />;
 
   return (
     <Container>
