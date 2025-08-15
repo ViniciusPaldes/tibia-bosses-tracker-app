@@ -52,6 +52,7 @@ export default function RootLayout() {
             }}
           >
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+            <Stack.Screen name="benchmark/bench-storage" options={{ title: 'Benchmark' }} />
             </Stack>
             <BossStatusModal/>
             <TimelinePanel />

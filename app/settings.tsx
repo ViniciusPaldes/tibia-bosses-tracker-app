@@ -2,6 +2,7 @@
 import { Screen } from '@/components/ui/Screen';
 import SelectModal from '@/components/ui/SelectModal';
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from '@/data/worlds/hooks';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 
@@ -72,6 +73,13 @@ export default function Settings() {
 
       <Row>
         <Label>About</Label>
+      </Row>
+
+      <Row>
+        <Label>Benchmark</Label>
+        <ValueButton onPress={() => router.push("/benchmark/bench-storage")}>
+          <ValueText>MMKV x AsyncStorage</ValueText>
+        </ValueButton>
       </Row>
 
       <SelectModal
