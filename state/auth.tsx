@@ -2,6 +2,7 @@
 import { auth } from '@/services/firebase';
 import { registerPushToken } from '@/services/push';
 import * as Google from 'expo-auth-session/providers/google';
+import Constants from 'expo-constants';
 import * as WebBrowser from 'expo-web-browser';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential, User } from 'firebase/auth';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
@@ -34,16 +35,18 @@ export function AuthProvider({ children }: PropsWithChildren) {
   // Register push token when signed in
   useEffect(() => {
     if (!user) return;
-    registerPushToken(null).catch(() => {});
+    registerPushToken(null).catch(() => { });
   }, [user]);
 
   // Create a single request (must have correct client IDs set in env)
+  const { googleOAuth } = (Constants.expoConfig?.extra ?? {}) as any;
+
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       Platform.select({
-        ios: process.env.GOOGLE_OAUTH_CLIENT_ID_IOS,
-        android: process.env.GOOGLE_OAUTH_CLIENT_ID_ANDROID,
-        default: process.env.GOOGLE_OAUTH_CLIENT_ID_WEB, // optional
+        ios: googleOAuth.ios,
+        android: googleOAuth.android,
+        default: googleOAuth.web, // optional
       })!,
   });
 
