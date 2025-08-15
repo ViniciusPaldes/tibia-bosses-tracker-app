@@ -45,9 +45,8 @@ const ErrorText = styled.Text(({ theme }) => ({
 const handleGooglePress = async (signInWithGoogle: () => Promise<void>) => {
   await signInWithGoogle();
 };
-
 export default function Onboarding() {
-  const { user, initializing, signInWithGoogle, isGoogleReady } = useAuth();
+  const { user, initializing, signInWithGoogle } = useAuth();
   const { data: worlds, loading, error, refetch } = useWorlds();
   const [expanded, setExpanded] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
@@ -57,7 +56,7 @@ export default function Onboarding() {
     loadSelectedWorld().then((w) => { if (w) setSelected(w); });
   }, []);
 
-  const canSignIn = !!selected && !loading && worlds.length > 0 && isGoogleReady;
+  const canSignIn = !!selected && !loading && worlds.length > 0 && !initializing && !user;
 
   return (
     <Container>
