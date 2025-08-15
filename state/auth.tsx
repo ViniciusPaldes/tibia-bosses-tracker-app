@@ -41,9 +41,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       Platform.select({
-        ios: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS,
-        android: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_ANDROID,
-        default: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_WEB, // optional
+        ios: process.env.GOOGLE_OAUTH_CLIENT_ID_IOS,
+        android: process.env.GOOGLE_OAUTH_CLIENT_ID_ANDROID,
+        default: process.env.GOOGLE_OAUTH_CLIENT_ID_WEB, // optional
       })!,
   });
 

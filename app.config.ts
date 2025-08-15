@@ -7,7 +7,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   name: 'tibia-bosses-tracker-app',
   slug: 'tibia-bosses-tracker-app',
   owner: "viniciuspaldes",
-  version: '1.1.0',
+  version: '1.1.1',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'tibiabossestrackerapp',
