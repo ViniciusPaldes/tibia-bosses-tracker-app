@@ -50,6 +50,7 @@ export async function submitSighting(input: SubmitSightingInput): Promise<string
 
   const playerName = auth.currentUser?.displayName || (auth.currentUser?.email ? auth.currentUser.email.split('@')[0] : undefined);
 
+  console.log('submitSighting', { world, bossName, status, note, playerName, uid });
   const docRef = await addDoc(collection(db, 'sightings'), {
     world,
     bossName,

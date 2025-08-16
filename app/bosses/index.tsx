@@ -2,9 +2,10 @@
 import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
+import { FlashList } from '@shopify/flash-list';
 import { format } from "date-fns";
 import { Image } from "expo-image";
-import { Redirect, router, useNavigation } from "expo-router";
+import { router, useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
@@ -199,7 +200,7 @@ export default function BossList() {
     }, [loadFilters])
   );
   if (initializing) return null;
-  if (!user) return <Redirect href="/onboarding" />;
+  
   const killedYesterday = chances.filter((c) => c.daysSince === 1);
   const killedYesterdayData = killedYesterday.map((c) => ({ ...c, id: c.id ?? c.name }));
   const filteredChances = useMemo(() => {
@@ -281,7 +282,7 @@ export default function BossList() {
         </ChipRow>
       ) : null}
 
-      <FlatList
+      <FlashList
         data={filteredChances.map((c) => ({ ...c, id: c.id ?? c.name }))}
         keyExtractor={(i) => i.id}
         ListHeaderComponent={

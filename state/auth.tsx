@@ -1,17 +1,15 @@
 // state/auth.tsx
 import { auth } from '@/services/firebase';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import { configureGoogleSignin } from '@/services/googleSignin';
+import { registerPushToken } from '@/services/push';
+import { GoogleSignin, statusCodes } from '@react-native-google-signin/google-signin';
 import { GoogleAuthProvider, onAuthStateChanged, signInWithCredential, User } from 'firebase/auth';
 import { createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from 'react';
 import { Alert, Platform } from 'react-native';
 
-WebBrowser.maybeCompleteAuthSession();
-
 type AuthContextValue = {
   user: User | null;
   initializing: boolean;
-  isGoogleReady: boolean;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
 };
@@ -30,40 +28,38 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => unsub();
   }, []);
 
-  // Create a single request (must have correct client IDs set in env)
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId:
-      Platform.select({
-        ios: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_IOS,
-        android: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_ANDROID,
-        default: process.env.EXPO_PUBLIC_GOOGLE_OAUTH_CLIENT_ID_WEB, // optional
-      })!,
-  });
-
-  const isGoogleReady = !!request;
-
-  // Handle the result from Google
+  // Configure Google Sign-In once on mount
   useEffect(() => {
-    if (response?.type === 'success' && response.params?.id_token) {
-      const cred = GoogleAuthProvider.credential(response.params.id_token);
-      signInWithCredential(auth, cred).catch((e) => {
-        console.warn('Firebase sign-in failed', e);
-        Alert.alert('Sign-in failed', 'Please try again.');
-      });
-    }
-  }, [response]);
+    configureGoogleSignin();
+  }, []);
+
+  // Register push token when signed in
+  useEffect(() => {
+    if (!user) return;
+    registerPushToken(null).catch(() => { });
+  }, [user]);
 
   const signInWithGoogle = async () => {
-    if (!request) return; // not ready yet
-    // ✅ Force Expo proxy so redirect is https://auth.expo.io/@user/slug
-    await promptAsync({ useProxy: true });
+    try {
+      if (Platform.OS === 'android') {
+        await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      }
+      const response = await GoogleSignin.signIn();
+      if (!response.data?.idToken) throw new Error('No idToken from Google');
+      const cred = GoogleAuthProvider.credential(response.data.idToken);
+      await signInWithCredential(auth, cred);
+    } catch (e: any) {
+      if (e?.code === statusCodes.SIGN_IN_CANCELLED) return;
+      console.warn('Google sign-in failed', e);
+      Alert.alert('Sign-in failed', 'Please try again.');
+    }
   };
 
   const signOut = async () => auth.signOut();
 
   const value = useMemo(
-    () => ({ user, initializing, isGoogleReady, signInWithGoogle, signOut }),
-    [user, initializing, isGoogleReady]
+    () => ({ user, initializing, signInWithGoogle, signOut }),
+    [user, initializing]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
