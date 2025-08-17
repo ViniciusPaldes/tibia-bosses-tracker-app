@@ -3,7 +3,7 @@ import { Screen } from '@/components/ui/Screen';
 import SelectModal from '@/components/ui/SelectModal';
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from '@/data/worlds/hooks';
 import { changeLanguage } from '@/src/i18n';
-import { router, useNavigation } from 'expo-router';
+import { useNavigation } from 'expo-router';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/native';
@@ -54,7 +54,7 @@ export default function Settings() {
   const canOpenPicker = !loading && !error && worlds.length > 0;
 
   return (
-    <Screen>
+    <Screen >
       <Row>
         <Label>{t('world')}</Label>
 
@@ -85,7 +85,7 @@ export default function Settings() {
         </ValueButton>
       </Row>
 
-      <Row>
+      {/* <Row>
         <Label>{t('about')}</Label>
       </Row>
 
@@ -94,7 +94,7 @@ export default function Settings() {
         <ValueButton onPress={() => router.push("/benchmark/bench-storage")}>
           <ValueText>{t('mmkvVsAsyncStorage')}</ValueText>
         </ValueButton>
-      </Row>
+      </Row> */}
 
       <SelectModal
         visible={pickerOpen}
