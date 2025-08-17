@@ -1,7 +1,7 @@
 // app/bosses/[id].tsx
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
@@ -88,9 +88,16 @@ export default function BossDetail() {
   // Load current world to filter recent sightings
   useLayoutEffect(() => {
     loadSelectedWorld().then(setWorld);
-  }, []);
+  }, []); 
+
+  const navigation = useNavigation();
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t('titleBossDetail') });
+  }, [navigation]);
 
   if (!parsed) return null;
+
+  
   return (
     initializing ? null : !user ? (
       <Redirect href="/onboarding" />

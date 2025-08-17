@@ -102,7 +102,7 @@ export default function TimelinePanel() {
               <SightingListItem
                 status={item.status as any}
                 title={item.bossName}
-                subtitle={`${item.playerName ?? t('someone')} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : t('justNow')}`}
+                subtitle={`${item.playerName ?? t('someone')} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) + ' ' + t('ago') : t('justNow')}`}
                 accessibilityHint={item.status === 'killed' ? t('killed') : undefined}
               />
             )}

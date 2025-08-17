@@ -70,7 +70,6 @@ export default function RootLayout() {
 
   if (!loaded || !i18nReady) return null;
 
-
   return (
     <NavigationThemeProvider value={theme}>
       <StyledThemeProvider theme={theme}>
@@ -97,11 +96,11 @@ export default function RootLayout() {
 
               {/* App */}
               <Stack.Screen name="bosses/index"/>
-              <Stack.Screen name="bosses/[id]" options={{ title: 'Boss Detail' }} />
+              <Stack.Screen name="bosses/[id]" />
               <Stack.Screen name="settings" />
 
               {/* Utilities / bench */}
-              <Stack.Screen name="benchmark/bench-storage" options={{ title: 'Benchmark' }} />
+              <Stack.Screen name="benchmark/bench-storage"/>
 
             </Stack>
 

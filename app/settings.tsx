@@ -3,8 +3,8 @@ import { Screen } from '@/components/ui/Screen';
 import SelectModal from '@/components/ui/SelectModal';
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from '@/data/worlds/hooks';
 import { changeLanguage } from '@/src/i18n';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { router, useNavigation } from 'expo-router';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/native';
 
@@ -33,7 +33,6 @@ const ValueText = styled.Text(({ theme }) => ({
   fontFamily: theme.tokens.typography.fonts.body,
 }));
 
-export const options = { title: 'Settings' };
 
 export default function Settings() {
   const { data: worlds, loading, error, refetch } = useWorlds();
@@ -41,10 +40,16 @@ export default function Settings() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
   const { t, i18n } = useTranslation('common');
+  const navigation = useNavigation();
 
   useEffect(() => {
     loadSelectedWorld().then((w) => { if (w) setSelected(w); });
   }, []);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: t('titleSettings') });
+  }, [navigation]);
+
 
   const canOpenPicker = !loading && !error && worlds.length > 0;
 

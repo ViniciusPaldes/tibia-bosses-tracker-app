@@ -7,7 +7,7 @@ import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
 import { useTranslation } from 'react-i18next';
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
 import { BossListItem } from "@/components/ui/BossListItem";
@@ -22,6 +22,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { useTheme } from "styled-components/native";
+const { width, height } = Dimensions.get("window");
 
 const TopBar = styled.View(() => ({
   flexDirection: "row",
@@ -141,7 +142,7 @@ export default function BossList() {
   const { data: chances, loading: chancesLoading } = useBossChances(selectedWorld);
   const { killedSet } = useRecentSightings(selectedWorld, 200);
   const { i18n, t } = useTranslation('common');
-  const todayLabel = formatDate(new Date(),i18n.language);
+  const todayLabel = formatDate(new Date(), i18n.language);
   const { open } = useModals();
   const [filters, setFilters] = useState<{ chance: 'low' | 'medium' | 'high' | null; city: string | null; search: string | null } | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
@@ -202,7 +203,7 @@ export default function BossList() {
     }, [loadFilters])
   );
   if (initializing) return null;
-  
+
   const killedYesterday = chances.filter((c) => c.daysSince === 1);
   const killedYesterdayData = killedYesterday.map((c) => ({ ...c, id: c.id ?? c.name }));
   const filteredChances = useMemo(() => {
@@ -229,7 +230,6 @@ export default function BossList() {
   }, [loadFilters]);
   return (
     <Screen>
-
       <TopBar>
         <Search
           placeholder={t('searchBosses')}
@@ -264,12 +264,12 @@ export default function BossList() {
                   filters.chance === 'low'
                     ? 'Low'
                     : filters.chance === 'medium'
-                    ? 'Mid'
-                    : filters.chance === 'high'
-                    ? 'High'
-                    : filters.chance === 'no chance'
-                    ? 'No Chance'
-                    : 'Lost Track'
+                      ? 'Mid'
+                      : filters.chance === 'high'
+                        ? 'High'
+                        : filters.chance === 'no chance'
+                          ? 'No Chance'
+                          : 'Lost Track'
                 }
               </ChipText>
               <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
