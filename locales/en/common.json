@@ -1,0 +1,24 @@
+{
+  "appName": "Tibia Boss Tracker",
+  "world": "World",
+  "selectWorld": "Select world",
+  "chooseWorld": "Choose your world",
+  "loadingWorlds": "Loading worlds…",
+  "retry": "Retry",
+  "signInWithGoogle": "Sign in with Google",
+  "settings": "Settings",
+  "language": "Language",
+  "about": "About",
+  "benchmark": "Benchmark",
+  "mmkvVsAsyncStorage": "MMKV x AsyncStorage",
+  "filter": "Filter",
+  "chance": "Chance",
+  "city": "City",
+  "apply": "Apply",
+  "english": "English",
+  "portugueseBR": "Português (BR)",
+  "spanish": "Español",
+  "polish": "Polski"
+}
+
+

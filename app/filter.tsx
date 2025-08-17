@@ -6,6 +6,7 @@ import { getCachedBossChances } from "@/data/chances";
 import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { useNavigation } from "expo-router";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { ScrollView, View } from "react-native";
 import styled from "styled-components/native";
 
@@ -54,12 +55,13 @@ type ChanceLabel = "Low" | "Mid" | "High" | "Lost Track" | "No Chance";
 
 export default function FilterScreen() {
   const navigation = useNavigation();
+  const { t } = useTranslation('common');
   const [chance, setChance] = useState<ChanceLabel | null>(null);
   const [city, setCity] = useState<string | null>(null);
   const [cities, setCities] = useState<string[]>([]);
 
   useLayoutEffect(() => {
-    navigation.setOptions({ title: "Filter" });
+    navigation.setOptions({ title: t('filter') });
   }, [navigation]);
 
   // Load persisted filters and dynamic cities
@@ -90,7 +92,7 @@ export default function FilterScreen() {
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Section>
-          <SectionTitle>Chance</SectionTitle>
+          <SectionTitle>{t('chance')}</SectionTitle>
           <ChipRow>
             {["Low", "Mid", "High", "Lost Track", "No Chance"].map((c) => (
               <Chip
@@ -105,7 +107,7 @@ export default function FilterScreen() {
         </Section>
 
         <Section>
-          <SectionTitle>City</SectionTitle>
+          <SectionTitle>{t('city')}</SectionTitle>
           <ChipRow>
             {cities.map((ct) => (
               <Chip
@@ -144,7 +146,7 @@ export default function FilterScreen() {
             navigation.goBack();
           }}
         >
-          <ButtonText>Apply</ButtonText>
+          <ButtonText>{t('apply')}</ButtonText>
         </Button>
         <View style={{ height: 24 }} />
       </ScrollView>
