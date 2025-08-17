@@ -163,7 +163,7 @@ export function BossListItem({
                     </Left>
                     <Badges>
                         <Badge bg={chanceColor({ tokens: { colors: { success: '#4CAF50', warning: '#FF9800' } } }, chance)}>
-                            <BadgeText>{chance}</BadgeText>
+                            <BadgeText>{t(chance)}</BadgeText>
                         </Badge>
                         {killed ? (
                             <KilledChip accessibilityLabel="Marked as killed">

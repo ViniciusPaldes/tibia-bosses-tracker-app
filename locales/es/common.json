@@ -51,7 +51,12 @@
   "english": "English",
   "portugueseBR": "Português (BR)",
   "spanish": "Español",
-  "polish": "Polski"
+  "polish": "Polski",
+  "high": "Alto",
+  "medium": "Medio",
+  "low": "Bajo",
+  "no chance": "Sin Probabilidad",
+  "Lost Track": "Perdido"
 }
 
 
