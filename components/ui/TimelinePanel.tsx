@@ -5,6 +5,7 @@ import { timeAgo } from '@/data/time';
 import { loadSelectedWorld } from '@/data/worlds/hooks';
 import { useModals } from '@/state/modals';
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Animated, Dimensions, FlatList, Pressable, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -67,7 +68,8 @@ export default function TimelinePanel() {
   const visible = !!modals.timeline;
   const [world, setWorld] = useState<string | null>(null);
   const tx = useRef(new Animated.Value(Dimensions.get('window').width)).current;
-
+  const { t } = useTranslation('common');
+  
   useEffect(() => {
     if (visible) {
       loadSelectedWorld().then(setWorld);
@@ -91,7 +93,7 @@ export default function TimelinePanel() {
         onTouchEnd={(e) => e.stopPropagation()}
       >
         <PanelSafeArea edges={['top', 'right', 'bottom']}>
-          <Title>Recent Sightings</Title>
+          <Title>{t('recentSightings')}</Title>
           <FlatList
             data={data}
             keyExtractor={(i) => i.id}
@@ -100,8 +102,8 @@ export default function TimelinePanel() {
               <SightingListItem
                 status={item.status as any}
                 title={item.bossName}
-                subtitle={`${item.playerName ?? 'Someone'} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : 'just now'}`}
-                accessibilityHint={item.status === 'killed' ? 'Killed' : undefined}
+                subtitle={`${item.playerName ?? t('someone')} • ${item.createdAt ? timeAgo(item.createdAt.toDate?.() ?? new Date()) : t('justNow')}`}
+                accessibilityHint={item.status === 'killed' ? t('killed') : undefined}
               />
             )}
           />

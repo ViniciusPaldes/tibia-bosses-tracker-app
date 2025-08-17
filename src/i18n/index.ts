@@ -43,6 +43,7 @@ export async function initI18n(): Promise<void> {
     defaultNS: 'common',
     interpolation: { escapeValue: false },
     compatibilityJSON: 'v4',
+    react: { useSuspense: false },
   };
 
   await i18n.use(initReactI18next).init(options);

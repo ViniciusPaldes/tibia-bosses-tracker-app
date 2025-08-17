@@ -1,7 +1,7 @@
 // app/bosses/[id].tsx
 import { Button, ButtonText } from "@/components/ui/Button";
 import { Screen } from "@/components/ui/Screen";
-import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
+import { Redirect, useLocalSearchParams } from "expo-router";
 import { useLayoutEffect, useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import styled from "styled-components/native";
@@ -10,14 +10,14 @@ import { BossListItem } from "@/components/ui/BossListItem";
 import { LootRow } from "@/components/ui/LootRow";
 import SightingListItem from "@/components/ui/SightingListItem";
 import StaticTibiaMap from "@/components/ui/StaticTibiaMap";
-import type { BossChanceItem, BossChanceLevel } from "@/data/chances";
+import type { BossChanceItem } from "@/data/chances";
 import { useRecentSightings } from "@/data/sightings/hooks";
 import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { getBossImageUrl } from "@/utils/images";
+import { useTranslation } from "react-i18next";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
-
 
 const Section = styled.View(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
@@ -30,32 +30,8 @@ const SectionTitle = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
   fontSize: theme.tokens.typography.sizes.h3,
   fontFamily: theme.tokens.typography.fonts.title,
-  fontWeight: 'bold',
   marginBottom: 8,
 }));
-
-const Badge = styled.Text<{ level: BossChanceLevel | undefined }>(({ theme, level }) => {
-  const map: Record<string, string> = {
-    high: theme.tokens.colors.success,
-    medium: theme.tokens.colors.warning,
-    low: '#7a7a7a',
-    'lost track': "#555",
-    'no chance': theme.tokens.colors.danger,
-  } as const;
-  const bg = (level && map[level]) || theme.tokens.colors.backgroundDark;
-  return {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: theme.tokens.radius,
-    backgroundColor: bg,
-    overflow: 'hidden',
-    color: '#111',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    fontSize: 12,
-  } as any;
-});
 
 const FloatingLabel = styled(Animated.View)(({ theme }) => ({
   marginTop: 8,
@@ -74,9 +50,8 @@ const FloatingLabelText = styled.Text(({ theme }) => ({
 
 export default function BossDetail() {
   const { boss, id } = useLocalSearchParams<{ boss?: string; id?: string }>();
-  const navigation = useNavigation();
   const { user, initializing } = useAuth();
-
+  const { t } = useTranslation('common');
   const parsed: BossChanceItem | null = useMemo(() => {
     try {
       return boss ? (JSON.parse(boss) as BossChanceItem) : null;
@@ -85,9 +60,6 @@ export default function BossDetail() {
     }
   }, [boss]);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({ title: "Boss Detail" });
-  }, [parsed, id, navigation]);
 
   const [labelText, setLabelText] = useState("");
   const labelOpacity = useSharedValue(0);
@@ -134,7 +106,7 @@ export default function BossDetail() {
           killed={Boolean(recent?.find((s) => s.bossName === parsed.name && s.status === 'killed'))}
         />
         <Section>
-          <SectionTitle>Location</SectionTitle>
+          <SectionTitle>{t('location')}</SectionTitle>
           {parsed?.location?.length ? (
             <>
               {parsed.location.map((coord, idx) => (
@@ -149,7 +121,7 @@ export default function BossDetail() {
         </Section>
 
         <Section>
-          <SectionTitle>Last sightings</SectionTitle>
+          <SectionTitle>{t('lastSightings')}</SectionTitle>
           {recent?.length ? (
             recent
               .filter((s) => s.bossName === parsed.name)
@@ -163,12 +135,12 @@ export default function BossDetail() {
                 />
               ))
           ) : (
-            <Text style={{ color: '#b0b0b0' }}>No recent reports</Text>
+            <Text style={{ color: '#b0b0b0' }}>{t('noRecentReports')}</Text>
           )}
         </Section>
 
         <Section>
-          <SectionTitle>Notable Loot</SectionTitle>
+          <SectionTitle>{t('notableLoot')}</SectionTitle>
           {parsed?.loots?.length ? (
             <>
               <LootRow items={parsed.loots} onSelect={handleSelect} />
@@ -181,7 +153,7 @@ export default function BossDetail() {
               </FloatingLabel>
             </>
           ) : (
-            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>None</Text>
+            <Text style={{ color: "#b0b0b0", textAlign: 'center' }}>{t('none')}</Text>
           )}
         </Section>
 
@@ -193,7 +165,7 @@ export default function BossDetail() {
               .open("bossStatus", { bossId: parsed?.id ?? (parsed?.name ?? 'unknown'), bossName: parsed?.name ?? 'Unknown' })
           }
         >
-          <ButtonText>Check this Boss</ButtonText>
+          <ButtonText>{t('checkThisBoss')}</ButtonText>
         </Button>
       </Screen>
     )

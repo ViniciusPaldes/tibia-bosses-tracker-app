@@ -1,5 +1,6 @@
 // components/ui/BossListItem.tsx
 import { Image } from 'expo-image';
+import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 import styled from 'styled-components/native';
 
@@ -143,6 +144,7 @@ export function BossListItem({
     onPress,
     killed = false,
 }: BossListItemProps) {
+    const { t } = useTranslation('common');
     return (
         <Card onPress={onPress}>
             <Avatar source={{ uri: imageUrl }} contentFit="contain" />
@@ -155,7 +157,7 @@ export function BossListItem({
                         {city ? <City numberOfLines={1} ellipsizeMode="tail">{city}</City> : null}
                         <Meta>
                             {typeof daysSince === 'number' ? (
-                                <Muted>last seen {daysSince === 0 ? 'today' : `${daysSince}d ago`}</Muted>
+                                <Muted>{t('lastSeen')} {daysSince === 0 ? t('today') : `${daysSince}d ${t('ago')}`}</Muted>
                             ) : null}
                         </Meta>
                     </Left>
@@ -165,7 +167,7 @@ export function BossListItem({
                         </Badge>
                         {killed ? (
                             <KilledChip accessibilityLabel="Marked as killed">
-                                <KilledChipText>Marked as Killed</KilledChipText>
+                                <KilledChipText>{t('markedAsKilled')}</KilledChipText>
                             </KilledChip>
                         ) : null}
                     </Badges>

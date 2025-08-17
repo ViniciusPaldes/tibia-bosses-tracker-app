@@ -7,6 +7,7 @@ import styled from 'styled-components/native';
 
 import { useAuth } from '@/state/auth';
 import { useModals } from '@/state/modals';
+import { useTranslation } from 'react-i18next';
 
 const Overlay = styled(Pressable)(() => ({
   position: 'absolute',
@@ -77,6 +78,7 @@ export default function LeftDrawer() {
   const { user, signOut } = useAuth();
   const visible = !!modals.drawer;
   const tx = useRef(new Animated.Value(-Dimensions.get('window').width)).current;
+  const { t } = useTranslation('common');
 
   useEffect(() => {
     if (visible) {
@@ -109,10 +111,10 @@ export default function LeftDrawer() {
 
           <Menu>
             <Item onPress={() => { close('drawer'); router.push('/settings'); }}>
-              <ItemText>Settings</ItemText>
+              <ItemText>{t('settings')}</ItemText>
             </Item>
             <Item onPress={async () => { close('drawer'); await signOut();}}>
-              <ItemText>Logout</ItemText>
+              <ItemText>{t('logout')}</ItemText>
             </Item>
           </Menu>
 

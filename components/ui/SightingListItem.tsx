@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components/native';
 
 export type SightingStatus = 'spotted' | 'killed' | 'checked';
@@ -54,14 +55,16 @@ const KilledTagText = styled.Text(() => ({
 }));
 
 export function SightingListItem({ title, subtitle, status, accessibilityHint }: Props) {
+  const { t } = useTranslation('common');
+
   if (status === 'killed') {
     return (
-      <RowKilled accessibilityHint={accessibilityHint ?? 'Killed'}>
+      <RowKilled accessibilityHint={accessibilityHint ?? t('killed')}>
         <Line>
           <Ionicons name="skull-outline" size={16} color="#b94a48" />
           <Title>{title}</Title>
           <KilledTag>
-            <KilledTagText>Killed</KilledTagText>
+            <KilledTagText>{t('killed')}</KilledTagText>
           </KilledTag>
         </Line>
         <Subtitle style={{ marginTop: 2 }}>{subtitle}</Subtitle>

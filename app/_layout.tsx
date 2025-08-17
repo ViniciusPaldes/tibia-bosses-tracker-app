@@ -67,7 +67,9 @@ export default function RootLayout() {
   useEffect(() => {
     initI18n().then(() => setI18nReady(true));
   }, []);
+
   if (!loaded || !i18nReady) return null;
+
 
   return (
     <NavigationThemeProvider value={theme}>
@@ -94,9 +96,9 @@ export default function RootLayout() {
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
 
               {/* App */}
-              <Stack.Screen name="bosses/index" options={{ title: 'Bosses' }} />
+              <Stack.Screen name="bosses/index"/>
               <Stack.Screen name="bosses/[id]" options={{ title: 'Boss Detail' }} />
-              <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+              <Stack.Screen name="settings" />
 
               {/* Utilities / bench */}
               <Stack.Screen name="benchmark/bench-storage" options={{ title: 'Benchmark' }} />
