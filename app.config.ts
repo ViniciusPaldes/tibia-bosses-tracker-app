@@ -4,10 +4,10 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: 'tibia-bosses-tracker-app',
+  name: 'Tibia Boss Tracker',
   slug: 'tibia-bosses-tracker-app',
   owner: "viniciuspaldes",
-  version: '1.1.1',
+  version: '1.1.2',
   orientation: 'portrait',
   icon: './assets/images/icon.png',
   scheme: 'tibiabossestrackerapp',
@@ -21,14 +21,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: "br.com.tibiawiki.tibiabosstracker",
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
-      backgroundColor: '#ffffff',
+      backgroundColor: '#0E0E0E',
     },
     edgeToEdgeEnabled: true,
   },
   web: { bundler: 'metro', output: 'static', favicon: './assets/images/favicon.png' },
   plugins: [
     'expo-router',
-    ['expo-splash-screen', { image: './assets/images/splash-icon.png', imageWidth: 200, resizeMode: 'contain', backgroundColor: '#ffffff' }],
+    ['expo-splash-screen', {
+      image: './assets/images/splash-icon.png',
+      resizeMode: 'cover',
+      imageWidth: 200,
+      backgroundColor: '#0E0E0E'
+    }],
     'expo-font',
     ['@react-native-google-signin/google-signin', {
       iosUrlScheme: "com.googleusercontent.apps.735049719990-se4dt61iojd6j6pbn56c22fjkca5ctvv"
