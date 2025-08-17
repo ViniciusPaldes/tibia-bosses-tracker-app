@@ -3,11 +3,11 @@ import { Card } from "@/components/ui/Card";
 import { Screen } from "@/components/ui/Screen";
 import { getBossImageUrl } from "@/utils/images";
 import { FlashList } from '@shopify/flash-list';
-import { format } from "date-fns";
 import { Image } from "expo-image";
 import { router, useNavigation } from "expo-router";
 import { useCallback, useLayoutEffect, useMemo } from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import { useTranslation } from 'react-i18next';
+import { Dimensions, FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 
 import { BossListItem } from "@/components/ui/BossListItem";
@@ -15,12 +15,14 @@ import { BOSSES_FILTERS_KEY } from "@/data/cache/keys";
 import { getWithTTL, setWithTTL } from "@/data/cache/storage";
 import { useRecentSightings } from "@/data/sightings/hooks";
 import { loadSelectedWorld, useBossChances } from "@/data/worlds/hooks";
+import { formatDate } from "@/src/i18n/formats";
 import { useAuth } from "@/state/auth";
 import { useModals } from "@/state/modals";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { useTheme } from "styled-components/native";
+const { width, height } = Dimensions.get("window");
 
 const TopBar = styled.View(() => ({
   flexDirection: "row",
@@ -131,7 +133,7 @@ export const options = { title: "Bosses" };
 export default function BossList() {
   const navigation = useNavigation();
   const theme = useTheme();
-  const todayLabel = format(new Date(), "EEE, MMM d");
+
   const { user, initializing } = useAuth();
   const [selectedWorld, setSelectedWorld] = useState<string | null>(null);
   useEffect(() => {
@@ -139,19 +141,20 @@ export default function BossList() {
   }, []);
   const { data: chances, loading: chancesLoading } = useBossChances(selectedWorld);
   const { killedSet } = useRecentSightings(selectedWorld, 200);
-
+  const { i18n, t } = useTranslation('common');
+  const todayLabel = formatDate(new Date(), i18n.language);
   const { open } = useModals();
   const [filters, setFilters] = useState<{ chance: 'low' | 'medium' | 'high' | null; city: string | null; search: string | null } | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "Bosses",
+      title: t('titleBosses'),
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => open('drawer', true)}
           style={{ paddingHorizontal: 8, paddingVertical: 4 }}
-          accessibilityLabel="Open menu"
+          accessibilityLabel={t('openMenu')}
         >
           <Ionicons name="menu-outline" size={22} color={theme.tokens.colors.text} />
         </TouchableOpacity>
@@ -161,7 +164,7 @@ export default function BossList() {
           <TouchableOpacity
             onPress={() => router.push("/filter")}
             style={{ marginRight: 16 }}
-            accessibilityLabel="Open filter"
+            accessibilityLabel={t('openFilter')}
           >
             <Ionicons
               name="funnel-outline"
@@ -172,7 +175,7 @@ export default function BossList() {
 
           <TouchableOpacity
             onPress={() => open("timeline", true)}
-            accessibilityLabel="Open timeline"
+            accessibilityLabel={t('openTimeline')}
           >
             <Ionicons
               name="time-outline"
@@ -200,7 +203,7 @@ export default function BossList() {
     }, [loadFilters])
   );
   if (initializing) return null;
-  
+
   const killedYesterday = chances.filter((c) => c.daysSince === 1);
   const killedYesterdayData = killedYesterday.map((c) => ({ ...c, id: c.id ?? c.name }));
   const filteredChances = useMemo(() => {
@@ -227,10 +230,9 @@ export default function BossList() {
   }, [loadFilters]);
   return (
     <Screen>
-
       <TopBar>
         <Search
-          placeholder="Search bosses..."
+          placeholder={t('searchBosses')}
           placeholderTextColor="#888"
           value={searchInput}
           onChangeText={setSearchInput}
@@ -251,23 +253,23 @@ export default function BossList() {
         <ChipRow>
           {filters.search && (
             <Chip onPress={() => removeFilter('search')}>
-              <ChipText>Search: {filters.search}</ChipText>
+              <ChipText>{t('search')}: {filters.search}</ChipText>
               <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
             </Chip>
           )}
           {filters.chance && (
             <Chip onPress={() => removeFilter('chance')}>
               <ChipText>
-                Chance: {
+                {t('chance')}: {
                   filters.chance === 'low'
                     ? 'Low'
                     : filters.chance === 'medium'
-                    ? 'Mid'
-                    : filters.chance === 'high'
-                    ? 'High'
-                    : filters.chance === 'no chance'
-                    ? 'No Chance'
-                    : 'Lost Track'
+                      ? 'Mid'
+                      : filters.chance === 'high'
+                        ? 'High'
+                        : filters.chance === 'no chance'
+                          ? 'No Chance'
+                          : 'Lost Track'
                 }
               </ChipText>
               <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
@@ -275,7 +277,7 @@ export default function BossList() {
           )}
           {filters.city && (
             <Chip onPress={() => removeFilter('city')}>
-              <ChipText>City: {filters.city}</ChipText>
+              <ChipText>{t('city')}: {filters.city}</ChipText>
               <Ionicons name="close" size={16} color={theme.tokens.colors.text} />
             </Chip>
           )}
@@ -289,7 +291,7 @@ export default function BossList() {
           <View>
             {killedYesterdayData.length > 0 && (
               <View style={{ marginBottom: 12 }}>
-                <SectionTitle>Bosses Killed Yesterday</SectionTitle>
+                <SectionTitle>{t('bossesKilledYesterday')}</SectionTitle>
                 <Horizontal
                   data={killedYesterdayData}
                   keyExtractor={(i: any) => i.id}
@@ -313,7 +315,7 @@ export default function BossList() {
               </View>
             )}
             <PageHeader>
-              <PageTitle>Today’s Bosses</PageTitle>
+              <PageTitle>{t('todaysBosses')}</PageTitle>
               <PageSubtitle>{todayLabel}</PageSubtitle>
             </PageHeader>
           </View>

@@ -5,6 +5,7 @@ import { loadSelectedWorld, saveSelectedWorld, useWorlds } from "@/data/worlds/h
 import { useAuth } from "@/state/auth";
 import { Image } from "expo-image";
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { Animated, Dimensions } from "react-native";
 import styled from "styled-components/native";
 
@@ -76,6 +77,7 @@ const handleGooglePress = async (signInWithGoogle: () => Promise<void>) => {
 export default function Onboarding() {
   const { user, initializing, signInWithGoogle } = useAuth();
   const { data: worlds, loading, error, refetch } = useWorlds();
+  const { t } = useTranslation('common');
 
   const [selected, setSelected] = useState<string | null>(null);
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -122,10 +124,10 @@ export default function Onboarding() {
           ],
         }}
       >
-        <Title>Tibia Boss Tracker</Title>
+        <Title>{t('appName')}</Title>
 
         <Dropdown>
-          <Title style={{ fontSize: 16, marginBottom: 8 }}>World:</Title>
+          <Title style={{ fontSize: 16, marginBottom: 8 }}>{t('world')}:</Title>
 
           <DropdownText
             onPress={() => {
@@ -134,14 +136,14 @@ export default function Onboarding() {
             accessibilityRole="button"
             accessibilityLabel="Select world"
           >
-            {loading ? "Loading worlds…" : selected ?? "Select world"}
+            {loading ? t('loadingWorlds') : selected ?? t('selectWorld')}
           </DropdownText>
 
           {!!error && (
             <>
               <ErrorText>{error}</ErrorText>
               <DropdownItem onPress={refetch}>
-                <DropdownText>Retry</DropdownText>
+                <DropdownText>{t('retry')}</DropdownText>
               </DropdownItem>
             </>
           )}
@@ -149,7 +151,7 @@ export default function Onboarding() {
 
         <SelectModal
           visible={pickerOpen}
-          title="Choose your world"
+          title={t('chooseWorld')}
           data={worlds}
           onSelect={async (w) => {
             setSelected(w);
@@ -159,7 +161,7 @@ export default function Onboarding() {
         />
 
         <Button variant="primary" onPress={() => handleGooglePress(signInWithGoogle)} disabled={!canSignIn}>
-          <ButtonText>Sign in with Google</ButtonText>
+          <ButtonText>{t('signInWithGoogle')}</ButtonText>
         </Button>
       </Container>
     </Root>

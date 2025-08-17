@@ -7,17 +7,18 @@ import { AuthProvider, useAuth } from '@/state/auth';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { initI18n } from '@/src/i18n';
 import { darkTheme, lightTheme } from '@/theme/theme';
 import {
   CinzelDecorative_400Regular,
   CinzelDecorative_700Bold,
 } from '@expo-google-fonts/cinzel-decorative';
 import { useFonts } from 'expo-font';
-import { useEffect } from 'react';
 
 const HeaderTitle = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
@@ -62,7 +63,12 @@ export default function RootLayout() {
     CinzelRegular: CinzelDecorative_400Regular,
     CinzelBold: CinzelDecorative_700Bold,
   });
-  if (!loaded) return null;
+  const [i18nReady, setI18nReady] = useState(false as any);
+  useEffect(() => {
+    initI18n().then(() => setI18nReady(true));
+  }, []);
+
+  if (!loaded || !i18nReady) return null;
 
   return (
     <NavigationThemeProvider value={theme}>
@@ -89,12 +95,12 @@ export default function RootLayout() {
               <Stack.Screen name="onboarding" options={{ headerShown: false }} />
 
               {/* App */}
-              <Stack.Screen name="bosses/index" options={{ title: 'Bosses' }} />
-              <Stack.Screen name="bosses/[id]" options={{ title: 'Boss Detail' }} />
-              <Stack.Screen name="settings" options={{ title: 'Settings' }} />
+              <Stack.Screen name="bosses/index"/>
+              <Stack.Screen name="bosses/[id]" />
+              <Stack.Screen name="settings" />
 
               {/* Utilities / bench */}
-              <Stack.Screen name="benchmark/bench-storage" options={{ title: 'Benchmark' }} />
+              <Stack.Screen name="benchmark/bench-storage"/>
 
             </Stack>
 

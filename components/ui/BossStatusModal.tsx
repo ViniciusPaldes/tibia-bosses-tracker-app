@@ -4,6 +4,7 @@ import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { submitSighting } from "@/services/firestore";
 import { useModals } from "@/state/modals";
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
 import styled from "styled-components/native";
 
@@ -40,7 +41,7 @@ export default function BossStatusModal() {
   const { modals, close } = useModals();
   const bossStatus = modals.bossStatus;
   const visible = !!bossStatus;
-
+  const { t } = useTranslation('common');
   if (!visible) return null;
 
   async function handleSubmit(status: 'spotted' | 'killed' | 'checked') {
@@ -60,11 +61,11 @@ export default function BossStatusModal() {
   return (
     <Overlay onTouchEnd={() => close("bossStatus")}>
       <Dialog>
-        <Title>Boss Status</Title>
-        <Hint>What happened when you checked this boss? Choose an option below so we can update the records.</Hint>
+        <Title>{t('bossStatus')}</Title>
+        <Hint>{t('bossStatusHint')}</Hint>
 
         <Button variant="secondary" onPress={() => handleSubmit('spotted')}>
-          <ButtonText>Boss Found – Notify Others</ButtonText>
+          <ButtonText>{t('bossFoundNotifyOthers')}</ButtonText>
         </Button>
 
         <Button
@@ -72,7 +73,7 @@ export default function BossStatusModal() {
           onPress={() => handleSubmit('killed')}
           style={{ marginTop: 8 }}
         >
-          <ButtonText>Boss Defeated</ButtonText>
+          <ButtonText>{t('bossDefeated')}</ButtonText>
         </Button>
 
         <Button
@@ -80,7 +81,7 @@ export default function BossStatusModal() {
           onPress={() => handleSubmit('checked')}
           style={{ marginTop: 8 }}
         >
-          <ButtonText>No Boss Found</ButtonText>
+          <ButtonText>{t('noBossFound')}</ButtonText>
         </Button>
       </Dialog>
     </Overlay>
