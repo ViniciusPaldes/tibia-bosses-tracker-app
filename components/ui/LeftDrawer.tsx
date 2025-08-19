@@ -86,11 +86,9 @@ export default function LeftDrawer() {
 
   useEffect(() => {
     if (visible) {
-      Animated.timing(tx, { toValue: 0, duration: 250, useNativeDriver: true, easing: undefined }).start(() => {
-      });
+      Animated.timing(tx, { toValue: 0, duration: 250, useNativeDriver: true, easing: undefined }).start();
     } else {
-      Animated.timing(tx, { toValue: -Dimensions.get('window').width, duration: 200, useNativeDriver: true, easing: undefined }).start(() => {
-      });
+      Animated.timing(tx, { toValue: -Dimensions.get('window').width, duration: 200, useNativeDriver: true, easing: undefined }).start();
     }
   }, [visible, tx]);
 

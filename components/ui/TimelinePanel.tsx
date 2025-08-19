@@ -77,11 +77,9 @@ export default function TimelinePanel() {
   useEffect(() => {
     if (visible) {
       loadSelectedWorld().then(setWorld);
-      Animated.timing(tx, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
-      });
+      Animated.timing(tx, { toValue: 0, duration: 200, useNativeDriver: true }).start();
     } else {
-      Animated.timing(tx, { toValue: Dimensions.get('window').width, duration: 180, useNativeDriver: true }).start(() => {
-      });
+      Animated.timing(tx, { toValue: Dimensions.get('window').width, duration: 180, useNativeDriver: true }).start();
     }
   }, [visible, tx]);
 

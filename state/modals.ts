@@ -21,10 +21,8 @@ type Store = {
 
 export const useModals = create<Store>((set) => ({
   modals: { bossStatus: null, timeline: null, drawer: null },
-  open: (key, payload) => {
-    return set((s) => ({ modals: { ...s.modals, [key]: payload } }));
-  },
-  close: (key) => {
-    return set((s) => ({ modals: { ...s.modals, [key]: null } }));
-  },
+  open: (key, payload) =>
+    set((s) => ({ modals: { ...s.modals, [key]: payload } })),
+  close: (key) =>
+    set((s) => ({ modals: { ...s.modals, [key]: null } })),
 }));
