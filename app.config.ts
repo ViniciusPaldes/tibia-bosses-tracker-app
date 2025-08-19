@@ -25,6 +25,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     edgeToEdgeEnabled: true,
   },
+  updates: {
+    url: 'https://u.expo.dev/737b3d74-a428-4a41-a270-b878fcc99106',
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
+  },
   web: { bundler: 'metro', output: 'static', favicon: './assets/images/favicon.png' },
   plugins: [
     'expo-router',
