@@ -85,14 +85,11 @@ export default function LeftDrawer() {
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    if (__DEV__ === false) console.log('[drawer] visible changed:', visible);
     if (visible) {
       Animated.timing(tx, { toValue: 0, duration: 250, useNativeDriver: true, easing: undefined }).start(() => {
-        if (__DEV__ === false) console.log('[drawer] slide-in animation completed');
       });
     } else {
       Animated.timing(tx, { toValue: -Dimensions.get('window').width, duration: 200, useNativeDriver: true, easing: undefined }).start(() => {
-        if (__DEV__ === false) console.log('[drawer] slide-out animation completed');
       });
     }
   }, [visible, tx]);
@@ -119,10 +116,10 @@ export default function LeftDrawer() {
           </View>
 
           <Menu>
-            <Item onPress={() => { if (__DEV__ === false) console.log('[drawer] go to settings'); close('drawer'); router.push('/settings'); }}>
+            <Item onPress={() => { close('drawer'); router.push('/settings'); }}>
               <ItemText>{t('settings')}</ItemText>
             </Item>
-            <Item onPress={async () => { if (__DEV__ === false) console.log('[drawer] sign out'); close('drawer'); await signOut();}}>
+            <Item onPress={async () => { close('drawer'); await signOut(); }}>
               <ItemText>{t('logout')}</ItemText>
             </Item>
           </Menu>

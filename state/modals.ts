@@ -22,11 +22,9 @@ type Store = {
 export const useModals = create<Store>((set) => ({
   modals: { bossStatus: null, timeline: null, drawer: null },
   open: (key, payload) => {
-    if (__DEV__ === false) console.log('[modals] open', key, payload);
     return set((s) => ({ modals: { ...s.modals, [key]: payload } }));
   },
   close: (key) => {
-    if (__DEV__ === false) console.log('[modals] close', key);
     return set((s) => ({ modals: { ...s.modals, [key]: null } }));
   },
 }));

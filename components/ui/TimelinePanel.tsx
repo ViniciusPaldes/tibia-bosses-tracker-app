@@ -73,17 +73,14 @@ export default function TimelinePanel() {
   const [world, setWorld] = useState<string | null>(null);
   const tx = useRef(new Animated.Value(Dimensions.get('window').width)).current;
   const { t } = useTranslation('common');
-  
+
   useEffect(() => {
-    if (__DEV__ === false) console.log('[timeline] visible changed:', visible);
     if (visible) {
       loadSelectedWorld().then(setWorld);
       Animated.timing(tx, { toValue: 0, duration: 200, useNativeDriver: true }).start(() => {
-        if (__DEV__ === false) console.log('[timeline] slide-in animation completed');
       });
     } else {
       Animated.timing(tx, { toValue: Dimensions.get('window').width, duration: 180, useNativeDriver: true }).start(() => {
-        if (__DEV__ === false) console.log('[timeline] slide-out animation completed');
       });
     }
   }, [visible, tx]);

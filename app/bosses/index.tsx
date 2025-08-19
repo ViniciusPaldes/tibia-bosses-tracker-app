@@ -148,17 +148,14 @@ export default function BossList() {
   const [searchInput, setSearchInput] = useState<string>("");
 
   const handleOpenDrawer = useCallback(() => {
-    if (__DEV__ === false) console.log('[ui] headerLeft pressed: open drawer');
     open('drawer', true);
   }, [open]);
 
   const handleOpenFilter = useCallback(() => {
-    if (__DEV__ === false) console.log('[ui] headerRight pressed: open filter');
     router.push('/filter');
   }, []);
 
   const handleOpenTimeline = useCallback(() => {
-    if (__DEV__ === false) console.log('[ui] headerRight pressed: open timeline');
     open('timeline', true);
   }, [open]);
 
