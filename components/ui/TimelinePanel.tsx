@@ -14,6 +14,8 @@ const Overlay = styled(Pressable)(() => ({
   position: 'absolute',
   inset: 0,
   backgroundColor: 'rgba(0,0,0,0.5)',
+  zIndex: 1,
+  elevation: 1,
 }));
 
 const Panel = styled(Animated.View)(({ theme }) => ({
@@ -26,6 +28,8 @@ const Panel = styled(Animated.View)(({ theme }) => ({
   borderTopLeftRadius: theme.tokens.radius,
   borderBottomLeftRadius: theme.tokens.radius,
   // padding moved into SafeArea to respect insets
+  zIndex: 2,
+  elevation: 2,
 }));
 
 const PanelSafeArea = styled(SafeAreaView)(({ theme }) => ({
@@ -69,7 +73,7 @@ export default function TimelinePanel() {
   const [world, setWorld] = useState<string | null>(null);
   const tx = useRef(new Animated.Value(Dimensions.get('window').width)).current;
   const { t } = useTranslation('common');
-  
+
   useEffect(() => {
     if (visible) {
       loadSelectedWorld().then(setWorld);
@@ -84,13 +88,10 @@ export default function TimelinePanel() {
   if (!visible) return null;
 
   return (
-    <View style={{ position: 'absolute', inset: 0 }}>
+    <View style={{ position: 'absolute', inset: 0, zIndex: 1000 }}>
       <Overlay onPress={() => close('timeline')} />
       <Panel
         style={{ transform: [{ translateX: tx }] }}
-        // prevent overlay press from firing when tapping inside the panel
-        onStartShouldSetResponder={() => true}
-        onTouchEnd={(e) => e.stopPropagation()}
       >
         <PanelSafeArea edges={['top', 'right', 'bottom']}>
           <Title>{t('recentSightings')}</Title>

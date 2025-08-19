@@ -79,8 +79,6 @@ export default function BenchStorage() {
       const mk = await benchMMKV(iter, payloadSize);
 
       setResult({ as, mk });
-      // Also log for copy/paste
-      console.log('[BENCH]', { as, mk });
     } finally {
       setRunning(false);
     }

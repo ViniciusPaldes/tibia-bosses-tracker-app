@@ -59,7 +59,7 @@ export default function BossStatusModal() {
   }
 
   return (
-    <Overlay onTouchEnd={() => close("bossStatus")}>
+    <Overlay onPress={() => close("bossStatus")}>
       <Dialog>
         <Title>{t('bossStatus')}</Title>
         <Hint>{t('bossStatusHint')}</Hint>

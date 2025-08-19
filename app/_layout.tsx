@@ -1,13 +1,16 @@
+import 'react-native-gesture-handler';
 // app/_layout.tsx
 import BossStatusModal from '@/components/ui/BossStatusModal';
 import LeftDrawer from '@/components/ui/LeftDrawer';
 import TimelinePanel from '@/components/ui/TimelinePanel';
 import { AuthProvider, useAuth } from '@/state/auth';
 
+import { useModals } from '@/state/modals';
 import { ThemeProvider as NavigationThemeProvider } from '@react-navigation/native';
 import { Stack, usePathname, useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 
@@ -73,7 +76,8 @@ export default function RootLayout() {
   return (
     <NavigationThemeProvider value={theme}>
       <StyledThemeProvider theme={theme}>
-        <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
           <AuthProvider>
             {/* Owns all redirects between onboarding and app */}
             <AuthGate />
@@ -98,6 +102,7 @@ export default function RootLayout() {
               <Stack.Screen name="bosses/index"/>
               <Stack.Screen name="bosses/[id]" />
               <Stack.Screen name="settings" />
+              <Stack.Screen name="filter" />
 
               {/* Utilities / bench */}
               <Stack.Screen name="benchmark/bench-storage"/>
@@ -108,11 +113,41 @@ export default function RootLayout() {
             <BossStatusModal />
             <TimelinePanel />
             <LeftDrawer />
+            <DebugBadge />
           </AuthProvider>
 
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-        </SafeAreaProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
       </StyledThemeProvider>
     </NavigationThemeProvider>
+  );
+}
+
+const BadgeContainer = styled.View(() => ({
+  position: 'absolute',
+  top: 4,
+  right: 4,
+  backgroundColor: 'rgba(0,0,0,0.6)',
+  paddingHorizontal: 8,
+  paddingVertical: 4,
+  borderRadius: 6,
+  zIndex: 2000,
+}));
+
+const BadgeText = styled.Text(({ theme }) => ({
+  color: theme.tokens.colors.text,
+  fontSize: 10,
+}));
+
+function DebugBadge() {
+  const { modals } = useModals();
+  if (__DEV__) return null;
+  return (
+    <BadgeContainer pointerEvents="none">
+      <BadgeText>
+        {`drawer:${!!modals.drawer} timeline:${!!modals.timeline} bossStatus:${!!modals.bossStatus}`}
+      </BadgeText>
+    </BadgeContainer>
   );
 }

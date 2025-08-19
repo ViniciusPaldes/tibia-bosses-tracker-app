@@ -13,6 +13,8 @@ const Overlay = styled(Pressable)(() => ({
   position: 'absolute',
   inset: 0,
   backgroundColor: 'rgba(0,0,0,0.5)',
+  zIndex: 1,
+  elevation: 1,
 }));
 
 const Drawer = styled(Animated.View)(({ theme }) => ({
@@ -24,6 +26,8 @@ const Drawer = styled(Animated.View)(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
   borderTopRightRadius: theme.tokens.radius,
   borderBottomRightRadius: theme.tokens.radius,
+  zIndex: 2,
+  elevation: 2,
 }));
 
 const Area = styled(SafeAreaView)(({ theme }) => ({
@@ -94,7 +98,7 @@ export default function LeftDrawer() {
   const version = Constants.expoConfig?.version ?? '';
 
   return (
-    <View style={{ position: 'absolute', inset: 0 }}>
+    <View style={{ position: 'absolute', inset: 0, zIndex: 1000 }}>
       <Overlay onPress={() => close('drawer')} />
       <Drawer style={{ transform: [{ translateX: tx }] }} onStartShouldSetResponder={() => true}>
         <Area edges={['top', 'left', 'bottom']}>
@@ -113,7 +117,7 @@ export default function LeftDrawer() {
             <Item onPress={() => { close('drawer'); router.push('/settings'); }}>
               <ItemText>{t('settings')}</ItemText>
             </Item>
-            <Item onPress={async () => { close('drawer'); await signOut();}}>
+            <Item onPress={async () => { close('drawer'); await signOut(); }}>
               <ItemText>{t('logout')}</ItemText>
             </Item>
           </Menu>
