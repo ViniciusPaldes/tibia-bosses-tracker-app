@@ -1,4 +1,5 @@
 // storage.ts
+import { captureException } from '@/services/sentry';
 import { MMKV } from 'react-native-mmkv';
 
 const storage = new MMKV({ id: 'app-cache' });
@@ -9,8 +10,8 @@ export async function setWithTTL<T>(key: string, value: T): Promise<void> {
   const entry: CacheEntry<T> = { value, ts: Date.now() };
   try {
     storage.set(key, JSON.stringify(entry));
-  } catch {
-    // swallow to preserve original behavior; optionally add logging
+  } catch (e) {
+    captureException(e, 'data/cache/storage:setWithTTL', { key });
   }
 }
 
@@ -26,7 +27,8 @@ export async function getWithTTL<T>(key: string, maxAgeMs: number): Promise<T | 
     if (age > maxAgeMs) return null;
 
     return parsed.value as T;
-  } catch {
+  } catch (e) {
+    captureException(e, 'data/cache/storage:getWithTTL', { key });
     return null;
   }
 }
