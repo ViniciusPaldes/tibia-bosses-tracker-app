@@ -22,6 +22,23 @@ import {
   CinzelDecorative_700Bold,
 } from '@expo-google-fonts/cinzel-decorative';
 import { useFonts } from 'expo-font';
+import * as Sentry from '@sentry/react-native';
+
+Sentry.init({
+  dsn: 'https://227ebee86d3053f622f81090d100934b@o4509871970844672.ingest.de.sentry.io/4509871978184784',
+
+  // Adds more context data to events (IP address, cookies, user, etc.)
+  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
+  sendDefaultPii: true,
+
+  // Configure Session Replay
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1,
+  integrations: [Sentry.mobileReplayIntegration(), Sentry.feedbackIntegration()],
+
+  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
+  // spotlight: __DEV__,
+});
 
 const HeaderTitle = styled.Text(({ theme }) => ({
   color: theme.tokens.colors.text,
@@ -58,7 +75,7 @@ function AuthGate() {
   return null;
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
@@ -122,7 +139,7 @@ export default function RootLayout() {
       </StyledThemeProvider>
     </NavigationThemeProvider>
   );
-}
+});
 
 const BadgeContainer = styled.View(() => ({
   position: 'absolute',
