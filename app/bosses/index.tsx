@@ -147,12 +147,27 @@ export default function BossList() {
   const [filters, setFilters] = useState<{ chance: 'low' | 'medium' | 'high' | null; city: string | null; search: string | null } | null>(null);
   const [searchInput, setSearchInput] = useState<string>("");
 
+  const handleOpenDrawer = useCallback(() => {
+    if (__DEV__ === false) console.log('[ui] headerLeft pressed: open drawer');
+    open('drawer', true);
+  }, [open]);
+
+  const handleOpenFilter = useCallback(() => {
+    if (__DEV__ === false) console.log('[ui] headerRight pressed: open filter');
+    router.push('/filter');
+  }, []);
+
+  const handleOpenTimeline = useCallback(() => {
+    if (__DEV__ === false) console.log('[ui] headerRight pressed: open timeline');
+    open('timeline', true);
+  }, [open]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: t('titleBosses'),
       headerLeft: () => (
         <TouchableOpacity
-          onPress={() => open('drawer', true)}
+          onPress={handleOpenDrawer}
           style={{ paddingHorizontal: 8, paddingVertical: 4 }}
           accessibilityLabel={t('openMenu')}
         >
@@ -162,7 +177,7 @@ export default function BossList() {
       headerRight: () => (
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <TouchableOpacity
-            onPress={() => router.push("/filter")}
+            onPress={handleOpenFilter}
             style={{ marginRight: 16 }}
             accessibilityLabel={t('openFilter')}
           >
@@ -174,7 +189,7 @@ export default function BossList() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => open("timeline", true)}
+            onPress={handleOpenTimeline}
             accessibilityLabel={t('openTimeline')}
           >
             <Ionicons
@@ -186,7 +201,7 @@ export default function BossList() {
         </View>
       ),
     });
-  }, [navigation, theme, open]);
+  }, [navigation, theme, t, handleOpenDrawer, handleOpenFilter, handleOpenTimeline]);
   const loadFilters = useCallback(async () => {
     const saved = await getWithTTL<any>(BOSSES_FILTERS_KEY, Number.MAX_SAFE_INTEGER);
     setFilters({

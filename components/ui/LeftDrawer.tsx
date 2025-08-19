@@ -13,6 +13,8 @@ const Overlay = styled(Pressable)(() => ({
   position: 'absolute',
   inset: 0,
   backgroundColor: 'rgba(0,0,0,0.5)',
+  zIndex: 1,
+  elevation: 1,
 }));
 
 const Drawer = styled(Animated.View)(({ theme }) => ({
@@ -24,6 +26,8 @@ const Drawer = styled(Animated.View)(({ theme }) => ({
   backgroundColor: theme.tokens.colors.card,
   borderTopRightRadius: theme.tokens.radius,
   borderBottomRightRadius: theme.tokens.radius,
+  zIndex: 2,
+  elevation: 2,
 }));
 
 const Area = styled(SafeAreaView)(({ theme }) => ({
@@ -81,10 +85,15 @@ export default function LeftDrawer() {
   const { t } = useTranslation('common');
 
   useEffect(() => {
+    if (__DEV__ === false) console.log('[drawer] visible changed:', visible);
     if (visible) {
-      Animated.timing(tx, { toValue: 0, duration: 250, useNativeDriver: true, easing: undefined }).start();
+      Animated.timing(tx, { toValue: 0, duration: 250, useNativeDriver: true, easing: undefined }).start(() => {
+        if (__DEV__ === false) console.log('[drawer] slide-in animation completed');
+      });
     } else {
-      Animated.timing(tx, { toValue: -Dimensions.get('window').width, duration: 200, useNativeDriver: true, easing: undefined }).start();
+      Animated.timing(tx, { toValue: -Dimensions.get('window').width, duration: 200, useNativeDriver: true, easing: undefined }).start(() => {
+        if (__DEV__ === false) console.log('[drawer] slide-out animation completed');
+      });
     }
   }, [visible, tx]);
 
@@ -94,7 +103,7 @@ export default function LeftDrawer() {
   const version = Constants.expoConfig?.version ?? '';
 
   return (
-    <View style={{ position: 'absolute', inset: 0 }}>
+    <View style={{ position: 'absolute', inset: 0, zIndex: 1000 }}>
       <Overlay onPress={() => close('drawer')} />
       <Drawer style={{ transform: [{ translateX: tx }] }} onStartShouldSetResponder={() => true}>
         <Area edges={['top', 'left', 'bottom']}>
@@ -110,10 +119,10 @@ export default function LeftDrawer() {
           </View>
 
           <Menu>
-            <Item onPress={() => { close('drawer'); router.push('/settings'); }}>
+            <Item onPress={() => { if (__DEV__ === false) console.log('[drawer] go to settings'); close('drawer'); router.push('/settings'); }}>
               <ItemText>{t('settings')}</ItemText>
             </Item>
-            <Item onPress={async () => { close('drawer'); await signOut();}}>
+            <Item onPress={async () => { if (__DEV__ === false) console.log('[drawer] sign out'); close('drawer'); await signOut();}}>
               <ItemText>{t('logout')}</ItemText>
             </Item>
           </Menu>
