@@ -7,6 +7,7 @@ import { useModals } from "@/state/modals";
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from "react-i18next";
 import { Pressable } from "react-native";
+import Toast from 'react-native-toast-message';
 import styled from "styled-components/native";
 
 const Overlay = styled(Pressable)(() => ({
@@ -51,9 +52,22 @@ export default function BossStatusModal() {
       if (!world) throw new Error('Select a world first');
       await submitSighting({ world, bossName: bossStatus!.bossName, status });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      Toast.show({
+        type: 'success',
+        position: 'bottom',
+        text1: t('bossStatusSuccess'),
+      });
+
+      
     } catch (e) {
       captureException(e, 'components/ui/BossStatusModal:handleSubmit', { status, bossName: bossStatus?.bossName });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Toast.show({
+        type: 'error',
+        position: 'bottom',
+        text1: t('bossStatusError'),
+      });
     } finally {
       close("bossStatus");
     }

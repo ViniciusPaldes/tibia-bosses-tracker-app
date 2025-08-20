@@ -56,7 +56,9 @@
   "medium": "Średnia",
   "low": "Niska",
   "no chance": "Brak Szansy",
-  "Lost Track": "Zaginiony"
+  "Lost Track": "Zaginiony",
+  "bossStatusSuccess": "Status bossa zaktualizowany pomyślnie",
+  "bossStatusError": "Nie udało się zaktualizować statusu bossa"
 }
 
 

@@ -56,7 +56,9 @@
   "medium": "Medium",
   "low": "Low",
   "no chance": "No Chance",
-  "Lost Track": "Lost Track"
+  "Lost Track": "Lost Track",
+  "bossStatusSuccess": "Boss status updated successfully",
+  "bossStatusError": "Failed to update boss status"
 }
 
 
