@@ -1,6 +1,7 @@
 // components/ui/BossStatusModal.tsx
 import { Button, ButtonText } from "@/components/ui/Button";
 import { loadSelectedWorld } from "@/data/worlds/hooks";
+import { logAnalyticsEvent } from "@/services/analytics";
 import { submitSighting } from "@/services/firestore";
 import { captureException } from "@/services/sentry";
 import { useModals } from "@/state/modals";
@@ -52,14 +53,17 @@ export default function BossStatusModal() {
       if (!world) throw new Error('Select a world first');
       await submitSighting({ world, bossName: bossStatus!.bossName, status });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
+      await logAnalyticsEvent('boss_status_updated', {
+        world: world,
+        bossName: bossStatus!.bossName,
+        status: status,
+      });
       Toast.show({
         type: 'success',
         position: 'bottom',
         text1: t('bossStatusSuccess'),
       });
 
-      
     } catch (e) {
       captureException(e, 'components/ui/BossStatusModal:handleSubmit', { status, bossName: bossStatus?.bossName });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

@@ -54,7 +54,7 @@ export default function Settings() {
   const canOpenPicker = !loading && !error && worlds.length > 0;
 
   return (
-    <Screen >
+    <Screen name="Settings">
       <Row>
         <Label>{t('world')}</Label>
 

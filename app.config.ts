@@ -15,10 +15,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   newArchEnabled: true,
   ios: {
     bundleIdentifier: "br.com.tibiawiki.tibiabosstracker",
+    googleServicesFile: "./GoogleService-Info.plist",
     supportsTablet: true
   },
   android: {
     package: "br.com.tibiawiki.tibiabosstracker",
+    googleServicesFile: "./google-services.json",
     adaptiveIcon: {
       foregroundImage: './assets/images/adaptive-icon.png',
       backgroundColor: '#0E0E0E',

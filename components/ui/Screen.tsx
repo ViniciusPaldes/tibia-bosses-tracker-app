@@ -1,6 +1,7 @@
+import { logAnalyticsEvent } from "@/services/analytics";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { Image } from "expo-image";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Dimensions, ImageSourcePropType, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -8,9 +9,10 @@ const { width, height } = Dimensions.get("window");
 
 interface ScreenProps {
   children: ReactNode;
+  name: string;
   padding?: number;
-  withHeaderOffset?: boolean; // default: true
-  scrollable?: boolean; // default: false
+  withHeaderOffset?: boolean;
+  scrollable?: boolean;
   background?: ImageSourcePropType;
 }
 
@@ -21,7 +23,6 @@ const Container = styled(SafeAreaView)<{ padding?: number }>(
     paddingHorizontal: padding ?? 16,
   })
 );
-
 
 const BgImage = styled(Image)({
   position: "absolute",
@@ -37,21 +38,28 @@ const Dim = styled.View({
   left: 0,
   right: 0,
   bottom: 0,
-  backgroundColor: "rgba(0,0,0,0.45)", // subtle dark overlay for readability
+  backgroundColor: "rgba(0,0,0,0.45)",
 });
-
 
 export function Screen({
   children,
+  name,
   padding,
   withHeaderOffset = true,
   scrollable = false,
   background,
 }: ScreenProps) {
-  const headerHeight = useHeaderHeight(); // respeita iOS/Android
+  const headerHeight = useHeaderHeight();
+
+  useEffect(() => {
+    logAnalyticsEvent("screen_view", {
+      'screen_name': name,
+      'screen_class': "Screen",
+    });
+  }, []);
+
   return (
     <Container
-      // usamos apenas bottom no SafeArea; o top vem do headerHeight
       edges={["bottom"]}
       padding={padding}
       style={withHeaderOffset ? { paddingTop: headerHeight + 8 } : undefined}

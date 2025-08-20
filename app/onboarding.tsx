@@ -1,5 +1,6 @@
 // app/onboarding.tsx
 import { Button, ButtonText } from "@/components/ui/Button";
+import { Screen } from "@/components/ui/Screen";
 import SelectModal from "@/components/ui/SelectModal";
 import { loadSelectedWorld, saveSelectedWorld, useWorlds } from "@/data/worlds/hooks";
 import { useAuth } from "@/state/auth";
@@ -10,11 +11,6 @@ import { Animated, Dimensions } from "react-native";
 import styled from "styled-components/native";
 
 const { width, height } = Dimensions.get("window");
-
-const Root = styled.View(({ theme }) => ({
-  flex: 1,
-  backgroundColor: theme.tokens.colors.backgroundDark, // fallback while image loads
-}));
 
 const BgImage = styled(Image)({
   position: "absolute",
@@ -70,8 +66,8 @@ const ErrorText = styled.Text(({ theme }) => ({
   marginTop: 8,
 }));
 
-const handleGooglePress = async (signInWithGoogle: () => Promise<void>) => {
-  await signInWithGoogle();
+const handleGooglePress = async (signInWithGoogle: (world: string | null) => Promise<void>, world: string | null) => {
+  await signInWithGoogle(world);
 };
 
 export default function Onboarding() {
@@ -102,7 +98,8 @@ export default function Onboarding() {
   const canSignIn = !!selected && !loading && worlds.length > 0 && !initializing && !user;
 
   return (
-    <Root>
+    <Screen name="Onboarding">
+
       {/* Replace the image path with your generated artwork */}
       <BgImage
         source={require("../assets/images/bg-onboarding.png")}
@@ -160,10 +157,10 @@ export default function Onboarding() {
           onClose={() => setPickerOpen(false)}
         />
 
-        <Button variant="primary" onPress={() => handleGooglePress(signInWithGoogle)} disabled={!canSignIn}>
+        <Button variant="primary" onPress={() => handleGooglePress(signInWithGoogle, selected)} disabled={!canSignIn}>
           <ButtonText>{t('signInWithGoogle')}</ButtonText>
         </Button>
       </Container>
-    </Root>
+    </Screen>
   );
 }

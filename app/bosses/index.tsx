@@ -241,7 +241,7 @@ export default function BossList() {
     await loadFilters();
   }, [loadFilters]);
   return (
-    <Screen>
+    <Screen name="Bosses">
       <TopBar>
         <Search
           placeholder={t('searchBosses')}
@@ -299,6 +299,7 @@ export default function BossList() {
       <FlashList
         data={filteredChances.map((c) => ({ ...c, id: c.id ?? c.name }))}
         keyExtractor={(i) => i.id}
+        estimatedItemSize={109}
         ListHeaderComponent={
           <View>
             {killedYesterdayData.length > 0 && (

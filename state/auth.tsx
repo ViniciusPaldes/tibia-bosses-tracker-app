@@ -1,4 +1,5 @@
 // state/auth.tsx
+import { setupUser } from '@/services/analytics';
 import { auth } from '@/services/firebase';
 import { configureGoogleSignin } from '@/services/googleSignin';
 import { registerPushToken } from '@/services/push';
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     registerPushToken(null).catch(() => { });
   }, [user]);
 
-  const signInWithGoogle = async () => {
+  const signInWithGoogle = async (world: string | null) => {
     try {
       if (Platform.OS === 'android') {
         await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
@@ -55,6 +56,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (!response.data?.idToken) throw new Error('No idToken from Google');
       const cred = GoogleAuthProvider.credential(response.data.idToken);
       await signInWithCredential(auth, cred);
+      await setupUser(response.data.user.email, {
+        world: world || '',
+      });
     } catch (e: any) {
       if (e?.code === statusCodes.SIGN_IN_CANCELLED) return;
       captureException(e, 'state/auth:signInWithGoogle');

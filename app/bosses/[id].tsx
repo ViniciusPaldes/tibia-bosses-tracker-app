@@ -102,7 +102,7 @@ export default function BossDetail() {
     initializing ? null : !user ? (
       <Redirect href="/onboarding" />
     ) : (
-      <Screen scrollable>
+      <Screen scrollable name="BossDetail">
         <BossListItem
           name={parsed.name}
           chance={parsed.chance}
