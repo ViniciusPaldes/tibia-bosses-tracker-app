@@ -3,7 +3,7 @@
   "world": "Mundo",
   "selectWorld": "Selecionar mundo",
   "chooseWorld": "Escolha seu mundo",
-  "loadingWorlds": "Carregando mundos…",  
+  "loadingWorlds": "Carregando mundos…",
   "titleBosses": "Bosses",
   "titleBossDetail": "Detalhes do Boss",
   "titleSettings": "Configurações",
@@ -56,7 +56,7 @@
   "medium": "Médio",
   "low": "Baixo",
   "no chance": "Sem Chance",
-  "Lost Track": "Perdido"
+  "Lost Track": "Perdido",
+  "bossStatusSuccess": "Atualizado!",
+  "bossStatusError": "Falha ao atualizar!"
 }
-
-

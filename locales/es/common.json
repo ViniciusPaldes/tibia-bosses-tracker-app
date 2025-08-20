@@ -56,7 +56,9 @@
   "medium": "Medio",
   "low": "Bajo",
   "no chance": "Sin Probabilidad",
-  "Lost Track": "Perdido"
+  "Lost Track": "Perdido",
+  "bossStatusSuccess": "Estado del boss actualizado correctamente",
+  "bossStatusError": "Error al actualizar el estado del boss"
 }
 
 

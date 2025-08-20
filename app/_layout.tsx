@@ -12,8 +12,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 
+import { toastConfig } from '@/components/ui/ToastConfig';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { Sentry } from '@/services/sentry';
 import { initI18n } from '@/src/i18n';
@@ -111,6 +113,7 @@ export default Sentry.wrap(function RootLayout() {
             </Stack>
 
             {/* Global UI overlays */}
+            <Toast config={toastConfig}/>
             <BossStatusModal />
             <TimelinePanel />
             <LeftDrawer />
