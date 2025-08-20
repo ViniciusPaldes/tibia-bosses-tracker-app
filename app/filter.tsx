@@ -89,7 +89,7 @@ export default function FilterScreen() {
   }, []);
 
   return (
-    <Screen>
+    <Screen name="Filter">
       <ScrollView showsVerticalScrollIndicator={false}>
         <Section>
           <SectionTitle>{t('chance')}</SectionTitle>
