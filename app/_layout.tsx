@@ -15,6 +15,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import styled, { ThemeProvider as StyledThemeProvider } from 'styled-components/native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { Sentry } from '@/services/sentry';
 import { initI18n } from '@/src/i18n';
 import { darkTheme, lightTheme } from '@/theme/theme';
 import {
@@ -58,7 +59,7 @@ function AuthGate() {
   return null;
 }
 
-export default function RootLayout() {
+export default Sentry.wrap(function RootLayout() {
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
@@ -122,7 +123,7 @@ export default function RootLayout() {
       </StyledThemeProvider>
     </NavigationThemeProvider>
   );
-}
+});
 
 const BadgeContainer = styled.View(() => ({
   position: 'absolute',

@@ -2,6 +2,7 @@
 import { Button, ButtonText } from "@/components/ui/Button";
 import { loadSelectedWorld } from "@/data/worlds/hooks";
 import { submitSighting } from "@/services/firestore";
+import { captureException } from "@/services/sentry";
 import { useModals } from "@/state/modals";
 import * as Haptics from 'expo-haptics';
 import { useTranslation } from "react-i18next";
@@ -51,7 +52,7 @@ export default function BossStatusModal() {
       await submitSighting({ world, bossName: bossStatus!.bossName, status });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (e) {
-      console.error(e);
+      captureException(e, 'components/ui/BossStatusModal:handleSubmit', { status, bossName: bossStatus?.bossName });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     } finally {
       close("bossStatus");

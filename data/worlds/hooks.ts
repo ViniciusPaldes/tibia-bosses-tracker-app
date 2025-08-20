@@ -1,4 +1,5 @@
 import { updateUserWorld } from '@/services/push';
+import { captureException } from '@/services/sentry';
 import { useCallback, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { SELECTED_WORLD_KEY, WORLD_LIST_KEY } from '../cache/keys';
@@ -31,7 +32,9 @@ export function useWorlds() {
         const names = dedupeAndSort(fresh.worlds.regular_worlds.map((w) => w.name));
         await setWithTTL(WORLD_LIST_KEY, names);
         setData(names);
-      } catch {}
+      } catch (e) {
+        captureException(e, 'data/worlds/hooks:useWorlds:backgroundRefresh');
+      }
       return;
     }
 
@@ -51,6 +54,7 @@ export function useWorlds() {
         setData(names2);
       } catch (e2: any) {
         setError(e2?.message ?? 'Failed to load worlds');
+        captureException(e2, 'data/worlds/hooks:useWorlds:fetch');
       }
     } finally {
       setLoading(false);
@@ -74,7 +78,7 @@ export async function loadSelectedWorld(): Promise<string | null> {
 export async function saveSelectedWorld(name: string): Promise<void> {
   await setWithTTL(SELECTED_WORLD_KEY, name);
   // Also persist to Firestore user profile for world-scoped notifications
-  try { await updateUserWorld(name); } catch {}
+  try { await updateUserWorld(name); } catch (e) { captureException(e, 'data/worlds/hooks:saveSelectedWorld:updateUserWorld'); }
 }
 
 // Fetch boss chances for the currently selected world. Cached per day.
@@ -121,8 +125,8 @@ export function useBossChances(selectedWorld: string | null) {
       try {
         const fresh = await ensureBossChancesForToday(selectedWorld);
         setData(sortBossesByChance(fresh));
-      } catch {
-        // Silent fail
+      } catch (e) {
+        captureException(e, 'data/worlds/hooks:useBossChances:foregroundRefresh');
       }
     });
     return () => {

@@ -1,5 +1,6 @@
 import { getWithTTL, setWithTTL } from '@/data/cache/storage';
 import { db } from '@/services/firestore';
+import { captureException } from '@/services/sentry';
 import { collection, limit as limitQ, onSnapshot, orderBy, query, where, type DocumentData, type QuerySnapshot } from 'firebase/firestore';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { Sighting } from './types';
@@ -41,6 +42,7 @@ export function useRecentSightings(world: string | null, limit: number = 50) {
       unsubRef.current = onSnapshot(q, mapSnapshot, (e) => setError(e.message));
     } catch (e: any) {
       setError(e?.message ?? 'Failed to load sightings');
+      captureException(e, 'data/sightings/hooks:useRecentSightings:load', { world, limit });
     } finally {
       setLoading(false);
     }
