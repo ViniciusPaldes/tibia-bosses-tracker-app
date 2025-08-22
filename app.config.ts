@@ -46,6 +46,14 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ['@react-native-google-signin/google-signin', {
       iosUrlScheme: "com.googleusercontent.apps.735049719990-se4dt61iojd6j6pbn56c22fjkca5ctvv"
     }],
+    ['expo-build-properties', {
+      android: {
+        googleServicesFile: './google-services.json',
+      },
+      ios: {
+        googleServicesFile: './GoogleService-Info.plist',
+      },
+    }],
   ],
   experiments: { typedRoutes: true },
   extra: {
