@@ -3,10 +3,10 @@ import i18n, { type InitOptions } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import { MMKV } from 'react-native-mmkv';
 
-import en from '../../locales/en/common.json';
-import es from '../../locales/es/common.json';
-import pl from '../../locales/pl/common.json';
-import ptBR from '../../locales/pt-BR/common.json';
+import en from './locales/en/common.json';
+import es from './locales/es/common.json';
+import pl from './locales/pl/common.json';
+import ptBR from './locales/pt-BR/common.json';
 
 const storage = new MMKV({ id: 'i18n' });
 const LANG_KEY = 'lang';

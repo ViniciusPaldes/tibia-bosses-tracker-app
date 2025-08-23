@@ -1,20 +1,30 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "jsx": "react-native",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["*"]           // @/theme/theme -> theme/theme.ts
+      "@/*": ["./src/*"],
+      "assets/*": ["./assets/*"]
     },
-    "skipLibCheck": true     // ajuda a evitar ruído de tipagem de libs
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": [
-    "app",
-    "theme",
-    "types/**/*.d.ts",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts",
+    "src",
     "**/*.ts",
-    "**/*.tsx"
-  ]
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ],
+  "exclude": ["node_modules", "test"]
 }

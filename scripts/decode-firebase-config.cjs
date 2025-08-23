@@ -1,5 +1,17 @@
-// scripts/decode-firebase-config.cjs
 const fs = require('fs');
+
+/**
+ * Expo CLI automatically loads .env, but only for Expo runtime, not plain node scripts.
+ * So when you run node ./scripts/decode-firebase-config.cjs, those vars aren’t loaded.
+ * That's why we need to require dotenv here.
+ */
+if (process.env.NODE_ENV !== "production") {
+  try {
+    require("dotenv").config();
+  } catch (e) {
+    console.warn("dotenv not found, skipping .env load");
+  }
+}
 
 function writeIf(envName, outPath) {
   const b64 = process.env[envName];
