@@ -14,9 +14,21 @@ export enum ANIM_TYPES {
 }
 
 type AnimatedContainerProps = {
+  /**
+   * The children to display in the container.
+   */
   children: React.ReactNode
+  /**
+   * The type of animation to use.
+   */
   type?: ANIM_TYPES
+  /**
+   * The duration of the animation.
+   */
   duration?: number
+  /**
+   * The delay of the animation.
+   */
   delay?: number
 }
 
