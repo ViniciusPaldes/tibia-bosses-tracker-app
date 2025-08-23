@@ -1,5 +1,4 @@
-// components/ui/BossStatusModal.tsx
-import { Button, ButtonText } from "@/components";
+import { Button, ButtonText } from "@/components/atoms";
 import { logAnalyticsEvent } from "@/services/api/analytics";
 import { submitSighting } from "@/services/api/firestore";
 import { captureException } from "@/services/api/sentry";

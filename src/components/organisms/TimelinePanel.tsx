@@ -1,5 +1,4 @@
-// components/ui/TimelinePanel.tsx
-import { SightingListItem } from '@/components';
+import { SightingListItem } from '@/components/molecules';
 import { useRecentSightings } from '@/services/storage/sightings/hooks';
 import { timeAgo } from '@/services/storage/time';
 import { loadSelectedWorld } from '@/services/storage/worlds/hooks';
